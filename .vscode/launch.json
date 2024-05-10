@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Module",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "TODO-ADD-MODULE-NAME-HERE",
+            "justMyCode": false
+        },
+        {
+            "name": "Python Debugger: Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "args": [
+                "tests",
+                "--no-cov"
+            ],
+            "justMyCode": false,
+            "purpose": [
+                "debug-test",
+                "debug-in-terminal"
+            ],
+            "env": {
+                "PYTEST_ADDOPTS": "--no-cov"
+            }
+        }
+    ]
+}
