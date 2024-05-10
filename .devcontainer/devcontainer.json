@@ -36,7 +36,9 @@
         "redhat.vscode-yaml",
         "GitHub.copilot",
         "GitHub.copilot-chat",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "ms-vsliveshare.vsliveshare",
+        "eamodio.gitlens"
       ]
     }
   },
