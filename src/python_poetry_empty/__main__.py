@@ -2,28 +2,23 @@
 Entry point for the module.
 """
 
-import asyncio
 import logging
 
 import structlog
 
+from .cli import cli
 from .setup.log import LogModeEnum, setup_log
 
 _logger: logging.Logger = structlog.get_logger(__package__)
 
 
-async def main() -> None:
+def main() -> None:
     """
-    Entry point for the application.
+    Main entry point for the module.
     """
-    _logger.info("main started")
-    _logger.info("main finished")
+    setup_log(mode=LogModeEnum.CONSOLE)
+    cli()
 
 
 if __name__ == "__main__":
-    setup_log(mode=LogModeEnum.CONSOLE)
-    _logger.debug("logging configured")
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        _logger.debug("main interrupted by user with keyboard interrupt")
+    main()
