@@ -1,14 +1,10 @@
 import structlog
 import typer
 
+from .commands import execute
+
+# Create Typer Application
 cli = typer.Typer()
 
-_logger = structlog.get_logger(__package__)
-
-
-@cli.command(name="execute")
-def execute():
-    """
-    Execute the command
-    """
-    _logger.info("Executing command")
+# Add command
+cli.command(name="execute")(execute)
