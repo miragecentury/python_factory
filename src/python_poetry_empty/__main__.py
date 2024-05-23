@@ -7,7 +7,7 @@ import logging
 
 import structlog
 
-from .setup.log import setup_log
+from .setup.log import LogModeEnum, setup_log
 
 _logger: logging.Logger = structlog.get_logger(__package__)
 
@@ -21,7 +21,7 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    setup_log()
+    setup_log(mode=LogModeEnum.CONSOLE)
     _logger.debug("logging configured")
     try:
         asyncio.run(main())

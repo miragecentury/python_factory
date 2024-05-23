@@ -9,7 +9,7 @@ import structlog
 _logger = structlog.getLogger(__package__)
 
 
-class LogMode(StrEnum):
+class LogModeEnum(StrEnum):
     """
     Defines the possible logging modes.
     """
@@ -18,7 +18,7 @@ class LogMode(StrEnum):
     JSON = auto()
 
 
-def setup_log(mode: LogMode = LogMode.CONSOLE) -> None:
+def setup_log(mode: LogModeEnum = LogModeEnum.CONSOLE) -> None:
     """
     Prepares the logging configuration.
 
@@ -45,10 +45,10 @@ def setup_log(mode: LogMode = LogMode.CONSOLE) -> None:
     ]
 
     match mode:
-        case LogMode.CONSOLE:
+        case LogModeEnum.CONSOLE:
             _processors.append(structlog.processors.ExceptionPrettyPrinter())
             _processors.append(structlog.dev.ConsoleRenderer())
-        case LogMode.JSON:
+        case LogModeEnum.JSON:
             _processors.append(structlog.processors.ExceptionRenderer())
             _processors.append(structlog.processors.JSONRenderer())
 
