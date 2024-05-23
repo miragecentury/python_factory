@@ -10,4 +10,4 @@ PATH="./src:./tests:$PATH"
 PYTHONPATH="./src:./tests:$PYTHONPATH"
 ```
 
-### 2- Create ```TODO-ADD-MODULE-NAME-HERE```
+### 2- Create ```shipmens```

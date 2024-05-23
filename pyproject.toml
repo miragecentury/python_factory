@@ -1,18 +1,23 @@
 [tool.poetry]
-name = "TODO-ADD-MODULE-NAME-HERE"
+name = "python_poetry_empty"
 version = "0.1.0"
 description = ""
 authors = ["miragecentury <victorien.vanroye@gmail.com>"]
 readme = "README.md"
 packages = [
-    { include = "TODO-ADD-MODULE-NAME-HERE", from = "src" },
+    { include = "python_poetry_empty", from = "src" },
 ]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
+structlog = "^24.1.0"
 
 [tool.poetry.group.test.dependencies]
 
+
+
+[tool.poetry.group.dev.dependencies]
+rich = "^13.7.1"
 
 [tool.poetry.extras]
 
@@ -23,17 +28,20 @@ pytest-xdist = "^3.6.1"
 pytest-cov = "^5.0.0"
 
 [tool.poetry.scripts]
-python-stack-example = "TODO-ADD-MODULE-NAME-HERE.__main__:main"
+python-poetry-empty = "python_poetry_empty.__main__:main"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = "tests -n auto --color=yes"
+addopts = "tests/units -n auto --color=yes"
 filterwarnings = [
 ]
 
 [tool.black]
 line-length = 88
 target-version = ['py311']
+
+[tool.isort]
+profile = "black"
