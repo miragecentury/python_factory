@@ -38,6 +38,8 @@ def setup_log(mode: LogMode = LogMode.CONSOLE) -> None:
         structlog.processors.CallsiteParameterAdder(
             parameters={
                 structlog.processors.CallsiteParameter.MODULE: True,
+                structlog.processors.CallsiteParameter.FUNC_NAME: True,
+                structlog.processors.CallsiteParameter.LINENO: True,
             }
         ),
     ]
