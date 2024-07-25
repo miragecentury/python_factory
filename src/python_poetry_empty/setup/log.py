@@ -29,7 +29,7 @@ def setup_log(mode: LogModeEnum = LogModeEnum.CONSOLE) -> None:
         None
     """
 
-    processors = [
+    processors: list[structlog.typing.Processor] = [
         structlog.stdlib.add_log_level,
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.processors.StackInfoRenderer(),

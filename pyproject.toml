@@ -14,8 +14,15 @@ structlog = "^24.1.0"
 typer = "^0.12.3"
 
 [tool.poetry.group.test.dependencies]
-
-
+mypy = "^1.10.0"
+types-pyyaml = "^6.0.12.20240311"
+pylint = {version="^3.2.2", extras=["spelling"]}
+black = "^24.4.2"
+pre-commit = "^3.7.1"
+pyupgrade = "^3.15.2"
+pytest = "^8.2.0"
+pytest-xdist = "^3.6.1"
+pytest-cov = "^5.0.0"
 
 [tool.poetry.group.dev.dependencies]
 rich = "^13.7.1"
@@ -51,3 +58,4 @@ profile = "black"
 python_version = "3.12"
 warn_unused_configs = true
 packages = "python_poetry_empty"
+mypy_path  = "src:tests"
