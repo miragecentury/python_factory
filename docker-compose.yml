@@ -1,0 +1,7 @@
+version: "3"
+
+services:
+  python-poetry-empty:
+    build:
+      context: .
+      dockerfile: Dockerfile

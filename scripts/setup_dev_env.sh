@@ -2,7 +2,7 @@
 
 # Poetry setup
 poetry env use python3.12
-poetry install --with test,dev
+poetry install --with test
 poetry update --sync
 
 # Pre-commit setup
@@ -13,3 +13,5 @@ PATH="./src:./tests:\$PATH"
 PYTHONPATH="./src:./tests:\$PYTHONPATH"
 
 EOF
+
+mkdir -p build/wheels
