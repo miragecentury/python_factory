@@ -24,9 +24,6 @@ pytest = "^8.2.0"
 pytest-xdist = "^3.6.1"
 pytest-cov = "^5.0.0"
 
-[tool.poetry.group.dev.dependencies]
-rich = "^13.7.1"
-
 [tool.poetry.extras]
 
 [tool.poetry.scripts]
