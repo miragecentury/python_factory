@@ -29,12 +29,6 @@ rich = "^13.7.1"
 
 [tool.poetry.extras]
 
-
-[tool.poetry.dev-dependencies]
-pytest = "^8.2.0"
-pytest-xdist = "^3.6.1"
-pytest-cov = "^5.0.0"
-
 [tool.poetry.scripts]
 python-poetry-empty = "python_poetry_empty.__main__:main"
 

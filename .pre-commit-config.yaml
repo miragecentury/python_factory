@@ -1,5 +1,5 @@
 default_language_version:
-  python: python3.11
+  python: python3.12
 default_stages:
   - "push"
   - "commit"
@@ -53,7 +53,7 @@ repos:
     hooks:
       - id: pylint
         name: pylint
-        entry: pylint
+        entry: "./.venv/bin/pylint"
         language: system
         types: [python]
         # Not that problematic to run in parallel see Pre-commit
