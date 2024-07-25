@@ -4,13 +4,18 @@ Project Empty for Python with Poetry
 
 ## Setup
 
-### 1- Add ```.env```
+### Dev Tools
 
-Add ```.env``` file with content as
+<https://www.python.org/downloads/>
+
+<https://python-poetry.org/>
+
+<https://pre-commit.com/>
+
+### Dev Environment
 
 ```bash
-PATH="./src:./tests:$PATH"
-PYTHONPATH="./src:./tests:$PYTHONPATH"
+./scripts/setup_dev_env.sh
 ```
 
 ### 2- Create ```shipmens```
