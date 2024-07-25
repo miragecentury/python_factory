@@ -1,4 +1,7 @@
-import structlog
+"""
+Cli Package definitions
+"""
+
 import typer
 
 from .commands import execute

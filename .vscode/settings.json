@@ -36,5 +36,10 @@
     "editor.rulers": [
         88
     ],
-    "markiscodecoverage.searchCriteria": "coverage.lcov"
+    "markiscodecoverage.searchCriteria": "coverage.lcov",
+    "files.eol": "\n",
+    "files.encoding": "utf8",
+    "files.trimTrailingWhitespace": true,
+    "files.trimTrailingWhitespaceInRegexAndStrings": true,
+    "files.insertFinalNewline": true
 }

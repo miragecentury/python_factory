@@ -29,7 +29,7 @@ def setup_log(mode: LogModeEnum = LogModeEnum.CONSOLE) -> None:
         None
     """
 
-    _processors = [
+    processors = [
         structlog.stdlib.add_log_level,
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.processors.StackInfoRenderer(),
@@ -46,10 +46,10 @@ def setup_log(mode: LogModeEnum = LogModeEnum.CONSOLE) -> None:
 
     match mode:
         case LogModeEnum.CONSOLE:
-            _processors.append(structlog.processors.ExceptionPrettyPrinter())
-            _processors.append(structlog.dev.ConsoleRenderer())
+            processors.append(structlog.processors.ExceptionPrettyPrinter())
+            processors.append(structlog.dev.ConsoleRenderer())
         case LogModeEnum.JSON:
-            _processors.append(structlog.processors.ExceptionRenderer())
-            _processors.append(structlog.processors.JSONRenderer())
+            processors.append(structlog.processors.ExceptionRenderer())
+            processors.append(structlog.processors.JSONRenderer())
 
-    structlog.configure(processors=_processors, cache_logger_on_first_use=True)
+    structlog.configure(processors=processors, cache_logger_on_first_use=True)
