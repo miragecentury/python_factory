@@ -1,0 +1,42 @@
+[[requires]]
+
+  # The name of the dependency provided by the Poetry Install Buildpack is
+  # "poetry-venv". This value is considered part of the public API for the
+  # buildpack and will not change without a plan for deprecation.
+  name = "poetry-venv"
+
+  # The Poetry Install buildpack supports some non-required metadata options.
+  [requires.metadata]
+
+    # Setting the build flag to true will ensure that the poetry-venv
+    # dependency is available on the $PYTHONPATH for subsequent
+    # buildpacks during their build phase. If you are writing a buildpack that
+    # needs poetry-venv during its build process, this flag should be
+    # set to true.
+    build = true
+
+    # Setting the launch flag to true will ensure that the poetry-venv
+    # dependency is available on the $PYTHONPATH for the running
+    # application. If you are writing an application that needs poetry-venv
+    # at runtime, this flag should be set to true.
+    launch = true
+[[requires]]
+
+  # The name of the Poetry dependency is "poetry". This value is considered
+  # part of the public API for the buildpack and will not change without a plan
+  # for deprecation.
+  name = "poetry"
+
+  # The Poetry buildpack supports some non-required metadata options.
+  [requires.metadata]
+
+    # Optional.
+    # When not specified, the buildpack will select the latest supported version from buildpack.toml
+    # This buildpack only supports exact version numbers.
+    version = "1.8.3"
+
+    # Set to true to ensure that `poetry` is avilable on both `$PATH` and `$PYTHONPATH` for subsequent buildpacks.
+    build = true
+
+    # Set to true to ensure that `poetry` is avilable on both `$PATH` and `$PYTHONPATH` for the launch container.
+    launch = true
