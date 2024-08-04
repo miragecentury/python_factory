@@ -6,4 +6,4 @@ id = "info.sysunicorns.python-poetry-empty"
 version = "0.1.0"
 
 [io.buildpacks]
-include = ["pyproject.toml", "src/", "README.md"]
+exclude = [".venv"]
