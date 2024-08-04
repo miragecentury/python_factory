@@ -12,6 +12,12 @@ Project Empty for Python with Poetry
 
 <https://pre-commit.com/>
 
+<https://skaffold.dev>
+
+<https://buildpacks.io/>
+
+<https://paketo.io/>
+
 ### Dev Environment
 
 ```bash
