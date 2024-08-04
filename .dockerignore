@@ -1,0 +1,9 @@
+.devcontainer
+.venv
+.github
+.mypy_cache
+.vscode
+scripts
+
+.coverage
+.env
