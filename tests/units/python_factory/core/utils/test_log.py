@@ -4,7 +4,7 @@ Test the setup.log module
 
 from unittest.mock import patch
 
-from python_poetry_empty.setup.log import setup_log
+from python_factory.core.utils.log import setup_log
 
 
 class TestSetupLog:

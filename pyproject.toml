@@ -1,17 +1,21 @@
 [tool.poetry]
-name = "python_poetry_empty"
+name = "python_factory"
 version = "0.1.0"
 description = ""
 authors = ["miragecentury <victorien.vanroye@gmail.com>"]
 readme = "README.md"
 packages = [
-    { include = "python_poetry_empty", from = "src" },
+    { include = "python_factory", from = "src" },
 ]
 
 [tool.poetry.dependencies]
 python = "^3.12"
 structlog = "^24.1.0"
 typer = "^0.12.3"
+injector = "^0.22.0"
+pydantic = "^2.8.2"
+fastapi = "^0.112.0"
+uvicorn = "^0.30.5"
 
 [tool.poetry.group.test.dependencies]
 mypy = "^1.10.0"
@@ -27,7 +31,7 @@ pytest-cov = "^5.0.0"
 [tool.poetry.extras]
 
 [tool.poetry.scripts]
-python-poetry-empty = "python_poetry_empty.__main__:main"
+python-factory-example = "python_factory.example.__main__:main"
 
 [build-system]
 requires = ["poetry-core"]
@@ -48,5 +52,5 @@ profile = "black"
 [tool.mypy]
 python_version = "3.12"
 warn_unused_configs = true
-packages = "python_poetry_empty"
+packages = "python_factory"
 mypy_path  = "src:tests"

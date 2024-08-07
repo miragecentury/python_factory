@@ -2,7 +2,7 @@
 schema-version = "0.2"
 
 [project]
-id = "info.sysunicorns.python-poetry-empty"
+id = "info.sysunicorns.python_factory_example"
 version = "0.1.0"
 
 [io.buildpacks]
