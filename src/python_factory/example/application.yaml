@@ -1,0 +1,8 @@
+---
+application:
+  title: Python Factory Example
+  description: An example application for Python Factory
+  version: 0.1.0
+  environment: ${ENVIRONMENT:development}
+  debug: ${DEBUG:false}
+  reload: ${RELOAD:false}

@@ -7,6 +7,4 @@ from .fastapi_abstract import FastAPIConfigAbstract
 
 
 class AppConfigAbstract(FastAPIConfigAbstract):
-
-    package_name: str
     environment: EnvironmentEnum
