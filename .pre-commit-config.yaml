@@ -65,8 +65,3 @@ repos:
     hooks:
       - id: pyupgrade
         args: ["--py312-plus", "--keep-runtime-typing"]
-  - repo: https://github.com/hadolint/hadolint
-    rev: v2.12.0
-    hooks:
-      - id: hadolint-docker
-        args: ["-t", "warning", "Dockerfile"]
