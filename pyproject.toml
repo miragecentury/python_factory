@@ -16,6 +16,7 @@ injector = "^0.22.0"
 pydantic = "^2.8.2"
 fastapi = "^0.112.0"
 uvicorn = "^0.30.5"
+opentelemetry-sdk = "^1.26.0"
 
 [tool.poetry.group.test.dependencies]
 mypy = "^1.10.0"
@@ -54,3 +55,4 @@ python_version = "3.12"
 warn_unused_configs = true
 packages = "python_factory"
 mypy_path  = "src:tests"
+namespace_packages = true
