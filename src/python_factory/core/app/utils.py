@@ -5,7 +5,7 @@ Provides utilities for the application.
 import uvicorn
 import uvicorn.server
 
-from .abstracts import AppBase, AppConfigAbstract
+from .base import AppConfigAbstract, BaseApplication
 
 
 class UvicornUtils:
@@ -13,8 +13,8 @@ class UvicornUtils:
     Provides utilities for Uvicorn.
     """
 
-    def __init__(self, app: AppBase, config: AppConfigAbstract) -> None:
-        self._app: AppBase = app
+    def __init__(self, app: BaseApplication, config: AppConfigAbstract) -> None:
+        self._app: BaseApplication = app
         self._config: AppConfigAbstract = config
 
     def build_uvicorn_config(self) -> uvicorn.Config:

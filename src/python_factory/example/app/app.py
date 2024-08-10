@@ -4,15 +4,12 @@ Provides the concrete application class.
 
 import injector
 
-from python_factory.core.app import AppBase
-from python_factory.core.app.abstracts import GenericAppModule
-from python_factory.core.utils.importlib import get_path_file_in_package
-from python_factory.core.utils.yaml_reader import YamlFileReader
+from python_factory.core.app import BaseApplication, GenericBaseApplicationModule
 
 from .config import AppConfig
 
 
-class App(AppBase):
+class App(BaseApplication):
     """
     Concrete application class.
     """
@@ -23,24 +20,13 @@ class App(AppBase):
         super().__init__(config=config)
 
 
-class AppModule(GenericAppModule[App, AppConfig]):
-
-    @injector.singleton
-    @injector.provider
-    def provider_for_app_config(self) -> AppConfig:
-        return AppConfig(
-            **YamlFileReader(
-                file_path=get_path_file_in_package(
-                    filename="application.yaml", package=App.PACKAGE_NAME
-                ),
-                yaml_base_key="application",
-                use_environment_injection=True,
-            ).read()
-        )
+class AppModule(GenericBaseApplicationModule[App, AppConfig]):
+    pass
 
 
-def app_factory() -> App:
+def factory_for_app() -> App:
     """
     Provides the application factory.
     """
-    return injector.Injector(modules=[AppModule]).get(interface=App)
+    injector_instance = injector.Injector(modules=[AppModule])
+    return injector_instance.get(interface=App)

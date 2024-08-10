@@ -1,5 +1,5 @@
 """
-Main entry point for the application.
+Re-Use the main function from the example module.
 """
 
 from python_factory.example import main
