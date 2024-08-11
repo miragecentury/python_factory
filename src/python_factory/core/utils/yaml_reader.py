@@ -5,7 +5,7 @@ Provides a class for reading YAML files and converting them to Pydantic models.
 import os
 import re
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 from yaml import SafeLoader
 
@@ -31,7 +31,9 @@ class YamlFileReader:
     Handles reading YAML files and converting them to Pydantic models.
     """
 
-    re = re.compile(r"\${([A-Za-z0-9\-\_]+):?([A-Za-z0-9\-\_]*)?}")
+    re_pattern: re.Pattern[str] = re.compile(
+        r"\${([A-Za-z0-9\-\_]+):?([A-Za-z0-9\-\_]*)?}"
+    )
 
     def __init__(
         self,
@@ -57,7 +59,7 @@ class YamlFileReader:
         # Store whether to use environment injection
         self._use_environment_injection: bool = use_environment_injection
 
-    def _filter_data_with_base_key(self, yaml_data: dict) -> dict:
+    def _filter_data_with_base_key(self, yaml_data: dict[str, Any]) -> dict[str, Any]:
         """
         Extracts the data from the YAML file with the base key.
         Args:
@@ -81,7 +83,7 @@ class YamlFileReader:
                     ) from exception
         return yaml_data
 
-    def _read_yaml_file(self, file_path: Path) -> dict:
+    def _read_yaml_file(self, file_path: Path) -> dict[str, Any]:
         """
         Reads the YAML file and returns the data as a dictionary.
         Args:
@@ -108,8 +110,8 @@ class YamlFileReader:
             return yaml_data
 
     def _inject_environment_variables(
-        self, yaml_data: dict | str | list
-    ) -> dict | str | list:
+        self, yaml_data: dict[str, Any] | str | list[str]
+    ) -> dict[str, Any] | str | list[str]:
         """
         Injects environment variables into the YAML data recursively.
         Args:
@@ -123,11 +125,12 @@ class YamlFileReader:
                 yaml_data[key] = self._inject_environment_variables(value)
         elif isinstance(yaml_data, list):
             yaml_data = [
-                self._inject_environment_variables(value) for value in yaml_data
+                cast(str, self._inject_environment_variables(yaml_data=value))
+                for value in yaml_data
             ]
         elif isinstance(yaml_data, str):
             while True:
-                match = self.re.search(yaml_data)
+                match = self.re_pattern.search(yaml_data)
                 if match is None:
                     break
                 env_key = match.group(1)
@@ -137,7 +140,7 @@ class YamlFileReader:
 
         return yaml_data
 
-    def read(self) -> dict:
+    def read(self) -> dict[str, Any]:
         """
         Reads the YAML file and converts it to a Pydantic model
         with or without environment injection.
@@ -148,7 +151,7 @@ class YamlFileReader:
 
         # Read the YAML file and filter the data with the base key
         try:
-            yaml_data: dict = self._filter_data_with_base_key(
+            yaml_data: dict[str, Any] = self._filter_data_with_base_key(
                 self._read_yaml_file(file_path=self._file_path)
             )
         except (FileNotFoundError, ValueError, KeyError) as exception:
@@ -157,9 +160,9 @@ class YamlFileReader:
             ) from exception
 
         if self._use_environment_injection:
-            yaml_data_with_env_injected: dict = cast(
-                dict, self._inject_environment_variables(yaml_data)
+            yaml_data_with_env_injected: dict[str, Any] = cast(
+                dict[str, Any], self._inject_environment_variables(yaml_data)
             )
-            return dict(yaml_data_with_env_injected)
+            return dict[str, Any](yaml_data_with_env_injected)
         else:
-            return dict(yaml_data)
+            return dict[str, Any](yaml_data)

@@ -2,7 +2,7 @@
 Provides the abstract class for the application.
 """
 
-from typing import Generic, TypeVar, cast, get_args
+from typing import Any, Generic, TypeVar, cast, get_args
 
 import injector
 
@@ -124,7 +124,7 @@ class GenericBaseApplicationModule(Generic[APP_T, CONFIG_T], injector.Module):
 
         # Read the application configuration file
         try:
-            yaml_file_content: dict = YamlFileReader(
+            yaml_file_content: dict[str, Any] = YamlFileReader(
                 file_path=get_path_file_in_package(
                     filename="application.yaml",
                     package=app_concrete_class.PACKAGE_NAME,

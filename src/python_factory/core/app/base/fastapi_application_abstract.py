@@ -48,7 +48,7 @@ class FastAPIAbstract(ABC):
             debug=config.debug,
         )
 
-    def get_asgi_app(self):
+    def get_asgi_app(self) -> FastAPI:
         """
         Get the ASGI application.
         """
