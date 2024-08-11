@@ -17,6 +17,7 @@ pydantic = "^2.8.2"
 fastapi = "^0.112.0"
 uvicorn = "^0.30.5"
 opentelemetry-sdk = "^1.26.0"
+opentelemetry-exporter-otlp-proto-http = "^1.26.0"
 
 [tool.poetry.group.test.dependencies]
 mypy = "^1.10.0"
