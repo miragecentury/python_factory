@@ -42,5 +42,6 @@
     "files.encoding": "utf8",
     "files.trimTrailingWhitespace": true,
     "files.trimTrailingWhitespaceInRegexAndStrings": true,
-    "files.insertFinalNewline": true
+    "files.insertFinalNewline": true,
+    "editor.tabSize": 4
 }

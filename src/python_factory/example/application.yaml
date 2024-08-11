@@ -1,5 +1,7 @@
 ---
 application:
+  service_name: python_factory_example
+  service_namespace: python_factory_example
   title: Python Factory Example
   description: An example application for Python Factory
   version: 0.1.0
