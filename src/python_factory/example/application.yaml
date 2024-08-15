@@ -8,3 +8,7 @@ application:
   environment: ${ENVIRONMENT:development}
   debug: ${DEBUG:false}
   reload: ${RELOAD:false}
+
+plugins:
+  activate:
+    - opentelemetry_plugin

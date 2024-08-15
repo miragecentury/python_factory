@@ -8,9 +8,10 @@ from python_factory.core.api import api
 
 from .config_abstract import AppConfigAbstract
 from .fastapi_application_abstract import FastAPIAbstract
+from .plugins_manager_abstract import ApplicationPluginManagerAbstract
 
 
-class BaseApplication(FastAPIAbstract):
+class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
     """
     Application abstract class.
     """
@@ -27,6 +28,9 @@ class BaseApplication(FastAPIAbstract):
         self._config: AppConfigAbstract = config
         FastAPIAbstract.__init__(
             self=cast(FastAPIAbstract, self), config=self._config, api_router=api
+        )
+        ApplicationPluginManagerAbstract.__init__(
+            self=cast(ApplicationPluginManagerAbstract, self)
         )
 
     def get_config(self) -> AppConfigAbstract:

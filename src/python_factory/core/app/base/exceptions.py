@@ -13,3 +13,7 @@ class ApplicationFactoryException(BaseApplicationException):
 
 class ApplicationConfigFactoryException(BaseApplicationException):
     pass
+
+
+class ApplicationPluginManagerException(BaseApplicationException):
+    pass

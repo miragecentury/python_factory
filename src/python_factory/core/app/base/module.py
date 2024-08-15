@@ -2,15 +2,15 @@
 Provide a generic module for injection bindings for the application.
 """
 
-from typing import Any, Generic, TypeVar, get_args
+from typing import Generic, TypeVar, get_args
 
 import injector
 
 from python_factory.core.plugins.opentelemetry_plugin import OpenTelemetryPluginModule
-from python_factory.core.utils.importlib import get_path_file_in_package
-from python_factory.core.utils.yaml_reader import (
-    UnableToReadYamlFileError,
-    YamlFileReader,
+from python_factory.core.utils.configs import (
+    UnableToReadConfigFileError,
+    ValueErrorConfigError,
+    build_config_from_file_in_package,
 )
 
 from .application import BaseApplication
@@ -100,25 +100,18 @@ class GenericBaseApplicationModule(Generic[APP_T, CONFIG_T], injector.Module):
                 "The package name must be set in the concrete application class."
             )
 
-        # Read the application configuration file
         try:
-            yaml_file_content: dict[str, Any] = YamlFileReader(
-                file_path=get_path_file_in_package(
-                    filename="application.yaml",
-                    package=app_concrete_class.PACKAGE_NAME,
-                ),
+            config: CONFIG_T = build_config_from_file_in_package(
+                package_name=app_concrete_class.PACKAGE_NAME,
+                config_class=app_config_concrete_class,
+                filename="application.yaml",
                 yaml_base_key="application",
-                use_environment_injection=True,
-            ).read()
-        except (FileNotFoundError, ImportError, UnableToReadYamlFileError) as exception:
+            )
+        except UnableToReadConfigFileError as exception:
             raise ApplicationConfigFactoryException(
                 "Unable to read the application configuration file."
             ) from exception
-
-        # Create the application configuration model
-        try:
-            config = app_config_concrete_class(**yaml_file_content)
-        except ValueError as exception:
+        except ValueErrorConfigError as exception:
             raise ApplicationConfigFactoryException(
                 "Unable to create the application configuration model."
             ) from exception
