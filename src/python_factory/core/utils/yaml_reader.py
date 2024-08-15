@@ -15,7 +15,7 @@ class UnableToReadYamlFileError(Exception):
     Raised when there is an error reading a YAML file.
     """
 
-    def __init__(self, file_path: Path, message: str) -> None:
+    def __init__(self, file_path: Path | None = None, message: str = "") -> None:
         """
         Initializes the exception.
 
@@ -72,14 +72,13 @@ class YamlFileReader:
         if self._yaml_base_key is not None:
             keys: list[str] = self._yaml_base_key.split(".")
             while len(keys) != 0:
+                key: str = keys.pop(0)
                 try:
-                    # /!\ pop don't accept index as keyword argument
-                    key: str = keys.pop(0)
                     yaml_data = yaml_data[key]
                 except KeyError as exception:
                     raise KeyError(
-                        f"Base key {key} not found in YAML file"
-                        + " from {self._yaml_base_key}"
+                        f"Base key {key}"
+                        " not found in YAML file" + " from {self._yaml_base_key}"
                     ) from exception
         return yaml_data
 
@@ -103,7 +102,10 @@ class YamlFileReader:
             loader = SafeLoader(file)
 
             try:
-                yaml_data = loader.get_data()
+                yaml_data: dict[str, Any] = cast(
+                    dict[str, Any],
+                    loader.get_data(),
+                )
             except Exception as exception:
                 raise ValueError(f"Error reading YAML file: {file_path}") from exception
 
@@ -128,7 +130,7 @@ class YamlFileReader:
                 cast(str, self._inject_environment_variables(yaml_data=value))
                 for value in yaml_data
             ]
-        elif isinstance(yaml_data, str):
+        else:
             while True:
                 match = self.re_pattern.search(yaml_data)
                 if match is None:

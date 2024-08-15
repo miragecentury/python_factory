@@ -2,7 +2,7 @@
 Test the setup.log module
 """
 
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from python_factory.core.utils.log import setup_log
 
@@ -13,7 +13,9 @@ class TestSetupLog:
     """
 
     @patch("structlog.configure")
-    def test_structlog_has_been_configured(self, structlog_configure_mock):
+    def test_structlog_has_been_configured(
+        self, structlog_configure_mock: MagicMock
+    ) -> None:
         """
         Test that structlog has been configured
         """
