@@ -4,6 +4,8 @@ Provides the abstract class for the application.
 
 from typing import cast
 
+from python_factory.core.api import api
+
 from .config_abstract import AppConfigAbstract
 from .fastapi_application_abstract import FastAPIAbstract
 
@@ -23,7 +25,9 @@ class BaseApplication(FastAPIAbstract):
             )
 
         self._config: AppConfigAbstract = config
-        FastAPIAbstract.__init__(self=cast(FastAPIAbstract, self), config=self._config)
+        FastAPIAbstract.__init__(
+            self=cast(FastAPIAbstract, self), config=self._config, api_router=api
+        )
 
     def get_config(self) -> AppConfigAbstract:
         """

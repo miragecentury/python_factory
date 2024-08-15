@@ -5,7 +5,7 @@ Provide
 from abc import ABC
 from typing import Any
 
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from pydantic import BaseModel
 
 
@@ -39,7 +39,9 @@ class FastAPIAbstract(ABC):
     Application integration with FastAPI.
     """
 
-    def __init__(self, config: FastAPIConfigAbstract) -> None:
+    def __init__(
+        self, config: FastAPIConfigAbstract, api_router: APIRouter | None = None
+    ) -> None:
         self._fastapi_app: FastAPI = FastAPI(
             title=config.title,
             description=config.description,
@@ -47,6 +49,8 @@ class FastAPIAbstract(ABC):
             root_path=config.root_path,
             debug=config.debug,
         )
+        if api_router is not None:
+            self._fastapi_app.include_router(router=api_router)
 
     def get_asgi_app(self) -> FastAPI:
         """
