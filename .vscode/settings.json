@@ -28,6 +28,15 @@
         "./src/",
         "./tests/"
     ],
+    "python.analysis.useLibraryCodeForTypes": true,
+    "python.analysis.diagnosticMode": "workspace",
+    "python.analysis.ignore": [
+        ".venv", // Exclude virtual environment
+        "/usr", // Exclude system python
+        "/**/.vscode-server", // Exclude remote server python
+        "/**/Python.framework",
+        "/**/.vscode/extensions",
+    ],
     "python.envFile": "${workspaceFolder}/.env",
     "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.formatOnSave": true,
