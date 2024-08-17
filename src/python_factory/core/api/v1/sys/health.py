@@ -22,7 +22,7 @@ class HealthStatusEnum(StrEnum):
     UNHEALTHY = "unhealthy"
 
 
-class HealthResponseModel(BaseModel, Response):
+class HealthResponseModel(BaseModel):
     """
     Health response schema.
     """

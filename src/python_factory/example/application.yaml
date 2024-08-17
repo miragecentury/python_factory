@@ -6,8 +6,8 @@ application:
   description: An example application for Python Factory
   version: 0.1.0
   environment: ${ENVIRONMENT:development}
-  debug: ${DEBUG:false}
-  reload: ${RELOAD:false}
+  debug: ${APPLICATION_DEBUG:false}
+  reload: ${APPLICATION_RELOAD:false}
 
 plugins:
   activate:
