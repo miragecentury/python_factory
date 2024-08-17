@@ -2,6 +2,8 @@
 Provides a class for reading YAML files and converting them to Pydantic models.
 """
 
+# mypy: disable-error-code="unused-ignore"
+
 import os
 import re
 from pathlib import Path
@@ -104,7 +106,7 @@ class YamlFileReader:
             try:
                 yaml_data: dict[str, Any] = cast(
                     dict[str, Any],
-                    loader.get_data(),
+                    loader.get_data(),  # type: ignore
                 )
             except Exception as exception:
                 raise ValueError(f"Error reading YAML file: {file_path}") from exception
