@@ -6,7 +6,7 @@ from abc import ABC
 from typing import Any
 
 from fastapi import APIRouter, FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class FastAPIConfigAbstract(ABC, BaseModel):
@@ -14,24 +14,26 @@ class FastAPIConfigAbstract(ABC, BaseModel):
     Partial configuration for FastAPI.
     """
 
+    model_config = ConfigDict(strict=False)
+
     # Application metadata
     title: str
     description: str
-    version: str = "0.0.0"
+    version: str
 
     # Host configuration
-    host: str = "0.0.0.0"
-    port: int = 8000
+    host: str = Field(default="0.0.0.0")
+    port: int = Field(default=8000)
 
     # Root configuration
-    root_path: str = ""
+    root_path: str = Field(default="")
 
     # Debug mode
-    debug: bool = False
+    debug: bool = Field(default=False, strict=False)
 
     # Uvicorn configuration
-    reload: bool = False
-    workers: int = 1
+    reload: bool = Field(default=False, strict=False)
+    workers: int = Field(default=1, strict=False)
 
 
 class FastAPIAbstract(ABC):
@@ -58,8 +60,8 @@ class FastAPIAbstract(ABC):
         """
         return self._fastapi_app
 
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
+    async def __call__(self, scope: Any, receive: Any, send: Any) -> None:
         """
         Forward the call to the FastAPI app.
         """
-        return self._fastapi_app.__call__(*args, **kwds)
+        return await self._fastapi_app.__call__(scope=scope, receive=receive, send=send)
