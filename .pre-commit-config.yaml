@@ -34,6 +34,13 @@ repos:
         types: [python]
         pass_filenames: false
         always_run: true
+      - id: ruff
+        name: ruff
+        language: system
+        entry: "./.venv/bin/ruff"
+        types: [python]
+        pass_filenames: false
+        args: ["check", "src", "tests", "--fix"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:

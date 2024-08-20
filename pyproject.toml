@@ -31,6 +31,7 @@ pyupgrade = "^3.15.2"
 pytest = "^8.2.0"
 pytest-xdist = "^3.6.1"
 pytest-cov = "^5.0.0"
+ruff = "^0.6.1"
 
 [tool.poetry.extras]
 
@@ -77,3 +78,20 @@ disallow_untyped_defs = true
 init_forbid_extra = true
 init_typed = true
 warn_required_dynamic_aliases = true
+
+[tool.ruff]
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["D","F","E","W","I","UP","PL","N","RUF"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+docstring-code-line-length = 88
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
