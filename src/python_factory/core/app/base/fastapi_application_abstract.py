@@ -1,6 +1,4 @@
-"""
-Provide
-"""
+"""Provides an abstract class for FastAPI application integration."""
 
 from abc import ABC
 from typing import Any
@@ -10,9 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class FastAPIConfigAbstract(ABC, BaseModel):
-    """
-    Partial configuration for FastAPI.
-    """
+    """Partial configuration for FastAPI."""
 
     model_config = ConfigDict(strict=False)
 
@@ -37,13 +33,22 @@ class FastAPIConfigAbstract(ABC, BaseModel):
 
 
 class FastAPIAbstract(ABC):
-    """
-    Application integration with FastAPI.
-    """
+    """Application integration with FastAPI."""
 
     def __init__(
         self, config: FastAPIConfigAbstract, api_router: APIRouter | None = None
     ) -> None:
+        """Instanciate the FastAPI application.
+
+        Args:
+            config (FastAPIConfigAbstract): The FastAPI configuration.
+            api_router (APIRouter, optional): The API router to include.
+                Defaults to None.
+
+        Returns:
+            None
+
+        """
         self._fastapi_app: FastAPI = FastAPI(
             title=config.title,
             description=config.description,
@@ -55,13 +60,9 @@ class FastAPIAbstract(ABC):
             self._fastapi_app.include_router(router=api_router)
 
     def get_asgi_app(self) -> FastAPI:
-        """
-        Get the ASGI application.
-        """
+        """Get the ASGI application."""
         return self._fastapi_app
 
     async def __call__(self, scope: Any, receive: Any, send: Any) -> None:
-        """
-        Forward the call to the FastAPI app.
-        """
+        """Forward the call to the FastAPI app."""
         return await self._fastapi_app.__call__(scope=scope, receive=receive, send=send)

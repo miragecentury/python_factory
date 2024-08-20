@@ -1,5 +1,4 @@
-"""
-API v1 sys health module.
+"""API v1 sys health module.
 
 Provide the Get health endpoint
 """
@@ -14,18 +13,14 @@ api_v1_sys_health = APIRouter(prefix="/health")
 
 
 class HealthStatusEnum(StrEnum):
-    """
-    Health status enum.
-    """
+    """Health status enum."""
 
     HEALTHY = "healthy"
     UNHEALTHY = "unhealthy"
 
 
 class HealthResponseModel(BaseModel):
-    """
-    Health response schema.
-    """
+    """Health response schema."""
 
     status: HealthStatusEnum
 
@@ -46,10 +41,11 @@ class HealthResponseModel(BaseModel):
     },
 )
 def get_api_v1_sys_health(response: Response) -> HealthResponseModel:
-    """
-    Get the health of the system.
+    """Get the health of the system.
+
     Args:
         response (Response): The response object.
+
     Returns:
         HealthResponse: The health status.
     """

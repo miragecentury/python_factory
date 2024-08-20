@@ -1,6 +1,4 @@
-"""
-Provides the abstract class for the application.
-"""
+"""Provides the abstract class for the application."""
 
 from typing import cast
 
@@ -12,14 +10,22 @@ from .plugins_manager_abstract import ApplicationPluginManagerAbstract
 
 
 class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
-    """
-    Application abstract class.
-    """
+    """Application abstract class."""
 
     PACKAGE_NAME: str = ""
 
     def __init__(self, config: AppConfigAbstract) -> None:
+        """Instanciate the application.
 
+        Args:
+            config (AppConfigAbstract): The application configuration.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If the package name is not set.
+        """
         if self.PACKAGE_NAME == "":
             raise ValueError(
                 "The package name must be set in the concrete application class."
@@ -34,7 +40,5 @@ class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
         )
 
     def get_config(self) -> AppConfigAbstract:
-        """
-        Get the application configuration.
-        """
+        """Get the application configuration."""
         return self._config

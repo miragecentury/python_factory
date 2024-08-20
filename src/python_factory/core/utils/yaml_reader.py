@@ -1,6 +1,4 @@
-"""
-Provides a class for reading YAML files and converting them to Pydantic models.
-"""
+"""Provides a class for reading YAML files and converting them to Pydantic models."""
 
 # mypy: disable-error-code="unused-ignore"
 
@@ -13,13 +11,10 @@ from yaml import SafeLoader
 
 
 class UnableToReadYamlFileError(Exception):
-    """
-    Raised when there is an error reading a YAML file.
-    """
+    """Raised when there is an error reading a YAML file."""
 
     def __init__(self, file_path: Path | None = None, message: str = "") -> None:
-        """
-        Initializes the exception.
+        """Initializes the exception.
 
         Args:
           file_path (str): The path to the YAML file.
@@ -29,9 +24,7 @@ class UnableToReadYamlFileError(Exception):
 
 
 class YamlFileReader:
-    """
-    Handles reading YAML files and converting them to Pydantic models.
-    """
+    """Handles reading YAML files and converting them to Pydantic models."""
 
     re_pattern: re.Pattern[str] = re.compile(
         r"\${([A-Za-z0-9\-\_]+):?([A-Za-z0-9\-\_]*)?}"
@@ -43,8 +36,7 @@ class YamlFileReader:
         yaml_base_key: str | None = None,
         use_environment_injection: bool = True,
     ) -> None:
-        """
-        Initializes the YAML file reader.
+        """Initializes the YAML file reader.
 
         Args:
           file_path (str): The path to the YAML file.
@@ -53,7 +45,6 @@ class YamlFileReader:
           use_environment_injection (bool, optional): Whether to use
           environment injection. Defaults to True.
         """
-
         # Store the file path and base key for YAML reading
         self._yaml_base_key: str | None = yaml_base_key
         self._file_path: Path = file_path
@@ -62,12 +53,14 @@ class YamlFileReader:
         self._use_environment_injection: bool = use_environment_injection
 
     def _filter_data_with_base_key(self, yaml_data: dict[str, Any]) -> dict[str, Any]:
-        """
-        Extracts the data from the YAML file with the base key.
+        """Extracts the data from the YAML file with the base key.
+
         Args:
             yaml_data (dict): The data from the YAML file.
+
         Returns:
             dict: The filtered data from the YAML file.
+
         Raises:
             KeyError: If the base key is not found in the YAML file.
         """
@@ -85,8 +78,8 @@ class YamlFileReader:
         return yaml_data
 
     def _read_yaml_file(self, file_path: Path) -> dict[str, Any]:
-        """
-        Reads the YAML file and returns the data as a dictionary.
+        """Reads the YAML file and returns the data as a dictionary.
+
         Args:
             file_path (Path): The path to the YAML file.
 
@@ -116,10 +109,11 @@ class YamlFileReader:
     def _inject_environment_variables(
         self, yaml_data: dict[str, Any] | str | list[str]
     ) -> dict[str, Any] | str | list[str]:
-        """
-        Injects environment variables into the YAML data recursively.
+        """Injects environment variables into the YAML data recursively.
+
         Args:
             yaml_data (dict | str | list): The data from the YAML file.
+
         Returns:
             dict: The data from the YAML file
             with environment variables injected.
@@ -145,14 +139,11 @@ class YamlFileReader:
         return yaml_data
 
     def read(self) -> dict[str, Any]:
-        """
-        Reads the YAML file and converts it to a Pydantic model
-        with or without environment injection.
+        """Reads the YAML file and converts it to a Pydantic model with env injected.
 
         Raises:
             UnableToReadYamlFileError: If there is an error reading the file.
         """
-
         # Read the YAML file and filter the data with the base key
         try:
             yaml_data: dict[str, Any] = self._filter_data_with_base_key(

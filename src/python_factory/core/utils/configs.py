@@ -1,6 +1,4 @@
-"""
-Provides utilities to handle configurations.
-"""
+"""Provides utilities to handle configurations."""
 
 from typing import Any, TypeVar
 
@@ -18,25 +16,19 @@ GENERIC_CONFIG = TypeVar(  # pylint: disable=invalid-name
 
 
 class ConfigBaseException(BaseException):
-    """
-    Base exception for all the configuration exceptions.
-    """
+    """Base exception for all the configuration exceptions."""
 
     pass
 
 
 class UnableToReadConfigFileError(ConfigBaseException):
-    """
-    Exception raised when the configuration file cannot be read.
-    """
+    """Exception raised when the configuration file cannot be read."""
 
     pass
 
 
 class ValueErrorConfigError(ConfigBaseException):
-    """
-    Exception raised when the configuration file cannot be read.
-    """
+    """Exception raised when the configuration file cannot be read."""
 
     pass
 
@@ -47,13 +39,13 @@ def build_config_from_file_in_package(
     config_class: type[GENERIC_CONFIG],
     yaml_base_key: str,
 ) -> GENERIC_CONFIG:
-    """
-    Build a configuration object from a file in a package.
+    """Build a configuration object from a file in a package.
 
     Args:
         package_name (str): The package name.
         filename (str): The filename.
         config_class (type[GENERIC_CONFIG]): The configuration class.
+        yaml_base_key (str): The base key in the YAML file.
 
     Returns:
         GENERIC_CONFIG: The configuration object.
@@ -62,7 +54,6 @@ def build_config_from_file_in_package(
         UnableToReadConfigFileError: If the configuration file cannot be read.
         ValueErrorConfigError: If the configuration file is invalid.
     """
-
     # Read the application configuration file
     try:
         yaml_file_content: dict[str, Any] = YamlFileReader(

@@ -1,7 +1,4 @@
-"""
-Package that contains the abstract classes
-for the application and application configuration.
-"""
+"""Provides the core application module for the Python Factory."""
 
 from .base import (
     AppConfigAbstract,

@@ -1,12 +1,11 @@
-""" Provide importlib functions """
+"""Provide importlib functions."""
 
 from importlib.resources import files
 from pathlib import Path
 
 
 def get_path_file_in_package(filename: str, package: str) -> Path:
-    """
-    Return Absolute Path of file in package
+    """Return Absolute Path of file in package.
 
     Args:
         filename (str): Filename to search

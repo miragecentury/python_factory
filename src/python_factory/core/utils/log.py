@@ -1,6 +1,4 @@
-"""
-Provides a function to setup the logging configuration.
-"""
+"""Provides a function to setup the logging configuration."""
 
 from enum import StrEnum, auto
 
@@ -10,17 +8,14 @@ _logger = structlog.getLogger(__package__)
 
 
 class LogModeEnum(StrEnum):
-    """
-    Defines the possible logging modes.
-    """
+    """Defines the possible logging modes."""
 
     CONSOLE = auto()
     JSON = auto()
 
 
 def setup_log(mode: LogModeEnum = LogModeEnum.CONSOLE) -> None:
-    """
-    Prepares the logging configuration.
+    """Prepares the logging configuration.
 
     Args:
         mode (LogMode): The logging mode to use.
@@ -28,7 +23,6 @@ def setup_log(mode: LogModeEnum = LogModeEnum.CONSOLE) -> None:
     Returns:
         None
     """
-
     processors: list[structlog.typing.Processor] = [
         structlog.stdlib.add_log_level,
         structlog.processors.TimeStamper(fmt="iso"),

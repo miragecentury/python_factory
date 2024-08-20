@@ -1,3 +1,1 @@
-"""
-Provides unit tests for the `PluginsManagerAbstract` class.
-"""
+"""Provides unit tests for the `PluginsManagerAbstract` class."""

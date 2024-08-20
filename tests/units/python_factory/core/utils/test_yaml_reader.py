@@ -1,6 +1,4 @@
-"""
-Provides unit tests for the YamlFileReader class.
-"""
+"""Provides unit tests for the YamlFileReader class."""
 
 from pathlib import Path
 from typing import Any
@@ -15,18 +13,13 @@ from python_factory.core.utils.yaml_reader import (
 
 
 class TestYamlFileReader:
-    """
-    Provides unit tests for the YamlFileReader class.
-    """
+    """Provides unit tests for the YamlFileReader class."""
 
     def test_simple_yaml_read(self) -> None:
-        """
-        Tests reading a simple YAML file.
-        """
-
+        """Tests reading a simple YAML file."""
         yaml_test_key = "key"
         yaml_test_value = "value"
-        data = f"""
+        data: str = f"""
             {yaml_test_key}: {yaml_test_value}
         """
         with patch("os.path.exists", return_value=True) as mock_exists:
@@ -48,10 +41,7 @@ class TestYamlFileReader:
                 assert read_data == {yaml_test_key: yaml_test_value}
 
     def test_yaml_read_with_base_key(self) -> None:
-        """
-        Tests reading a YAML file with a base key.
-        """
-
+        """Tests reading a YAML file with a base key."""
         yaml_test_key = "key"
         yaml_test_value = "value"
         yaml_base_key = "base_key"
@@ -78,14 +68,11 @@ class TestYamlFileReader:
                 assert read_data == {yaml_test_key: yaml_test_value}
 
     def test_yaml_read_with_base_key_multiple_levels(self) -> None:
-        """
-        Tests reading a YAML file with a base key with multiple levels.
-        """
-
+        """Tests reading a YAML file with a base key with multiple levels."""
         yaml_test_key = "key"
         yaml_test_value = "value"
         yaml_base_key = "base.key"
-        data = f"""
+        data: str = f"""
             base:
                 key:
                     {yaml_test_key}: {yaml_test_value}
@@ -109,10 +96,7 @@ class TestYamlFileReader:
                 assert read_data == {yaml_test_key: yaml_test_value}
 
     def test_yaml_read_with_base_key_not_present(self) -> None:
-        """
-        Tests reading a YAML file with a base key not present.
-        """
-
+        """Tests reading a YAML file with a base key not present."""
         yaml_test_key = "key"
         yaml_test_value = "value"
         yaml_base_key = "base_key"
@@ -136,10 +120,7 @@ class TestYamlFileReader:
                 )
 
     def test_yaml_read_with_simple_env_value_to_inject(self) -> None:
-        """
-        Tests reading a YAML file with a simple environment value to inject.
-        """
-
+        """Tests reading a YAML file with a simple environment value to inject."""
         yaml_test_key = "key"
         yaml_test_value = "value"
         data: str = f"""
@@ -165,10 +146,7 @@ class TestYamlFileReader:
                     assert read_data == {yaml_test_key: yaml_test_value}
 
     def test_yaml_read_with_list(self) -> None:
-        """
-        Tests reading a YAML file with a list.
-        """
-
+        """Tests reading a YAML file with a list."""
         yaml_test_key = "key"
         yaml_test_value: list[str] = ["value1", "value2"]
         data: str = f"""
@@ -226,10 +204,13 @@ class TestYamlFileReader:
     def test_yaml_read_with_env_value_to_inject(
         self, data: str, env_mock: dict[str, str], expected_result: dict[str, str]
     ) -> None:
-        """
-        Tests reading a YAML file with an environment value to inject.
-        """
+        """Tests reading a YAML file with an environment value to inject.
 
+        Args:
+            data (str): The data to read.
+            env_mock (dict[str, str]): The environment key and value to be mocked.
+            expected_result (dict[str, str]): The expected result.
+        """
         with patch("os.path.exists", return_value=True) as mock_exists:
             with patch(
                 "builtins.open", new_callable=mock_open, read_data=data

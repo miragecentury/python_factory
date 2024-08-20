@@ -1,6 +1,4 @@
-"""
-Main entry point for the application.
-"""
+"""Main entry point for the application."""
 
 from python_factory.example import main
 

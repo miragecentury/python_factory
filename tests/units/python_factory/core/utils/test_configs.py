@@ -1,6 +1,4 @@
-"""
-Test for python_factory.core.utils.configs
-"""
+"""Test for python_factory.core.utils.configs."""
 
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -19,9 +17,7 @@ from python_factory.core.utils.yaml_reader import UnableToReadYamlFileError
 
 
 class TestBuildConfigFromFileInPackage:
-    """
-    Provides test cases for the build_config_from_file_in_package function.
-    """
+    """Provides test cases for the build_config_from_file_in_package function."""
 
     @contextmanager
     def mock_method(
@@ -31,7 +27,21 @@ class TestBuildConfigFromFileInPackage:
         base_key: str = "base_key",
         side_effects: type[Exception] | None = None,
     ) -> Iterator[tuple[MagicMock, MagicMock, MagicMock]]:
+        """Mock the methods used in the build_config_from_file_in_package function.
 
+        Args:
+            mock_value_file_path (str): The file path.
+            mock_value_file_content (dict[str, Any]): The file content.
+            base_key (str): The base key in the yaml file.
+            side_effects (type[Exception] | None): The side effects for the read method.
+
+        Yields:
+            tuple[MagicMock, MagicMock, MagicMock]: The mocks for the methods. (
+                mock_get_path_file_in_package,
+                mock_yamlfilereader_constructor,
+                mock_yaml_file_reader_object)
+
+        """
         # mock get_path_file_in_package
         with patch(
             "python_factory.core.utils.configs.get_path_file_in_package"
@@ -60,14 +70,10 @@ class TestBuildConfigFromFileInPackage:
                 )
 
     def test_build_config_from_file_in_package(self) -> None:
-        """
-        Test the case where the configuration file is read successfully.
-        """
+        """Test the case where the configuration file is read successfully."""
 
         class TestConfigModel(BaseModel):
-            """
-            Test configuration model.
-            """
+            """Test configuration model."""
 
             key: str
 
@@ -107,10 +113,7 @@ class TestBuildConfigFromFileInPackage:
     def test_build_config_from_file_in_package_with_exception(
         self, side_effects: type[Exception], expected_raise: type[Exception]
     ) -> None:
-        """
-        Test the case where an exception is raised while reading the configuration file.
-        """
-
+        """Test the case where an exception is raised."""
         mock_value_file_path: str = "file_path"
         mock_value_package_name: str = "package_name"
         mock_value_file_content: dict[str, str] = {
@@ -133,9 +136,7 @@ class TestBuildConfigFromFileInPackage:
                 )
 
     def test_build_config_from_file_in_package_with_invalid_config(self) -> None:
-        """
-        Test the case where the configuration file is invalid.
-        """
+        """Test the case where the configuration file is invalid."""
 
         class TestConfigModel(BaseModel):
             key: str

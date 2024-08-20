@@ -1,6 +1,4 @@
-"""
-Package for system related API endpoints.
-"""
+"""Package for system related API endpoints."""
 
 from fastapi import APIRouter
 

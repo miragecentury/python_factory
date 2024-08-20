@@ -1,6 +1,4 @@
-"""
-Provides a factory function to build a objets for OpenTelemetry.
-"""
+"""Provides a factory function to build a objets for OpenTelemetry."""
 
 from typing import Any
 
@@ -35,18 +33,14 @@ from .exceptions import OpenTelemetryPluginConfigError
 
 
 class OpenTelemetryPluginModule(injector.Module):
-    """
-    Configure the injection bindings for OpenTelemetryPlugin.
-    """
+    """Configure the injection bindings for OpenTelemetryPlugin."""
 
     @injector.singleton
     @injector.provider
     def resource_factory(
         self, application: injector.Inject[BaseApplication]
     ) -> Resource:
-        """
-        Build a resource object for OpenTelemetry
-        from the application and it's configuration.
+        """Build a resource object for OpenTelemetry from the application and configs.
 
         Args:
             application (BaseApplication): The application object.
@@ -54,7 +48,6 @@ class OpenTelemetryPluginModule(injector.Module):
         Returns:
             Resource: The resource object for OpenTelemetry.
         """
-
         return Resource(
             attributes={
                 DEPLOYMENT_ENVIRONMENT: application.get_config().environment.value,
@@ -71,8 +64,7 @@ class OpenTelemetryPluginModule(injector.Module):
         resource: injector.Inject[Resource],
         opentelemetry_config: injector.Inject[OpenTelemetryConfig],
     ) -> MeterProvider:
-        """
-        Build a meter provider object for OpenTelemetry
+        """Build a meter provider object for OpenTelemetry.
 
         Args:
             resource (Resource): The resource object for OpenTelemetry.
@@ -82,7 +74,6 @@ class OpenTelemetryPluginModule(injector.Module):
         Returns:
             MeterProvider: The meter provider object for OpenTelemetry.
         """
-
         # Exit with a void MeterProvider if the export is not activated
         if opentelemetry_config.activate is False:
             return MeterProvider(
@@ -125,8 +116,7 @@ class OpenTelemetryPluginModule(injector.Module):
         resource: injector.Inject[Resource],
         opentelemetry_config: injector.Inject[OpenTelemetryConfig],
     ) -> TracerProvider:
-        """
-        Provides a tracer provider for OpenTelemetry.
+        """Provides a tracer provider for OpenTelemetry.
 
         Args:
             resource (Resource): The resource object for OpenTelemetry.
@@ -136,7 +126,6 @@ class OpenTelemetryPluginModule(injector.Module):
         Returns:
             TracerProvider: The tracer provider object for OpenTelemetry.
         """
-
         # Exit with a void TracerProvider if the export is not activated
         if opentelemetry_config.activate is False:
             return TracerProvider(
@@ -189,7 +178,14 @@ class OpenTelemetryPluginModule(injector.Module):
         self,
         base_application: injector.Inject["BaseApplication"],
     ) -> OpenTelemetryConfig:
+        """Provide the OpenTelemetry configuration.
 
+        Args:
+            base_application (BaseApplication): The base application object.
+
+        Returns:
+            OpenTelemetryConfig: The OpenTelemetry configuration object.
+        """
         if base_application.PACKAGE_NAME == "":
             raise OpenTelemetryPluginConfigError(
                 "The package name must be set in the concrete application class."

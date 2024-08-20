@@ -1,5 +1,4 @@
-"""
-API v1 sys readiness module.
+"""API v1 sys readiness module.
 
 Provide the Get readiness endpoint
 """
@@ -14,18 +13,14 @@ api_v1_sys_readiness = APIRouter(prefix="/readiness")
 
 
 class ReadinessStatusEnum(StrEnum):
-    """
-    Readiness status enum.
-    """
+    """Readiness status enum."""
 
     READY = "ready"
     NOT_READY = "not_ready"
 
 
 class ReadinessResponseModel(BaseModel):
-    """
-    Readiness response schema.
-    """
+    """Readiness response schema."""
 
     status: ReadinessStatusEnum
 
@@ -46,10 +41,11 @@ class ReadinessResponseModel(BaseModel):
     },
 )
 def get_api_v1_sys_readiness(response: Response) -> ReadinessResponseModel:
-    """
-    Get the readiness of the system.
+    """Get the readiness of the system.
+
     Args:
         response (Response): The response object.
+
     Returns:
         ReadinessResponse: The readiness status.
     """

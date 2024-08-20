@@ -1,6 +1,4 @@
-"""
-Plugins manager abstract module.
-"""
+"""Plugins manager abstract module."""
 
 from abc import ABC
 from importlib import import_module
@@ -20,9 +18,7 @@ from .exceptions import ApplicationPluginManagerException
 
 
 class PluginsActivationList(BaseModel):
-    """
-    Model for the plugins activation list.
-    """
+    """Model for the plugins activation list."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -30,8 +26,7 @@ class PluginsActivationList(BaseModel):
 
 
 class ApplicationPluginManagerAbstract(ABC):
-    """
-    Abstract class for the application plugin manager.
+    """Abstract class for the application plugin manager.
 
     Responsibilities:
     - Retrieve the plugins for the application.
@@ -45,7 +40,7 @@ class ApplicationPluginManagerAbstract(ABC):
     PLUGIN_PACKAGE_NAME: str = "python_factory.core.plugins"
 
     def __init__(self) -> None:
-
+        """Instanciate the application plugin manager."""
         if self.PACKAGE_NAME == "":
             raise ValueError(
                 "The package name must be set in the concrete plugin manager class."
@@ -62,17 +57,14 @@ class ApplicationPluginManagerAbstract(ABC):
         rich.inspect(self._plugins)
 
     def _check_pre_conditions(self) -> None:
-        """
-        Check the pre-conditions for the plugins.
+        """Check the pre-conditions for the plugins.
 
         Raises:
             ApplicationPluginManagerException: If a plugin is not
             activated.
 
         """
-
         for plugin in self._plugins_activation_list.activate:
-
             try:
                 plugin_module: ModuleType = import_module(
                     name=f"{self.PLUGIN_PACKAGE_NAME}.{plugin.value}"
@@ -95,8 +87,7 @@ class ApplicationPluginManagerAbstract(ABC):
             self._plugins.append(plugin_module)
 
     def _build_plugins_activation_list(self) -> PluginsActivationList:
-        """
-        Build the plugins activation list.
+        """Build the plugins activation list.
 
         Returns:
             PluginsActivationList: The plugins activation list.
@@ -108,7 +99,6 @@ class ApplicationPluginManagerAbstract(ABC):
             creating the configuration model.
 
         """
-
         try:
             config: PluginsActivationList = build_config_from_file_in_package(
                 package_name=self.PACKAGE_NAME,

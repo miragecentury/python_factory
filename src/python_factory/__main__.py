@@ -1,6 +1,4 @@
-"""
-Re-Use the main function from the example module.
-"""
+"""Re-Use the main function from the example module."""
 
 from python_factory.example import main
 

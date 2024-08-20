@@ -1,6 +1,4 @@
-"""
-OpenTelemetry Plugin Module
-"""
+"""OpenTelemetry Plugin Module."""
 
 from injector import Module
 
@@ -21,22 +19,37 @@ INJECTOR_MODULE: type[Module] = OpenTelemetryPluginModule
 
 
 def pre_conditions_check(application: BaseApplicationProtocol) -> bool:
-    """
-    Check the pre-conditions for the OpenTelemetry plugin.
+    """Check the pre-conditions for the OpenTelemetry plugin.
+
+    Args:
+        application (BaseApplicationProtocol): The application.
+
+    Returns:
+        bool: True if the pre-conditions are met, False otherwise.
     """
     del application
     return True
 
 
 async def on_startup(application: BaseApplicationProtocol) -> None:
-    """
-    Actions to perform on startup for the OpenTelemetry plugin.
+    """Actions to perform on startup for the OpenTelemetry plugin.
+
+    Args:
+        application (BaseApplicationProtocol): The application.
+
+    Returns:
+        None
     """
     del application
 
 
 async def on_shutdown(application: BaseApplicationProtocol) -> None:
-    """
-    Actions to perform on shutdown for the OpenTelemetry plugin.
+    """Actions to perform on shutdown for the OpenTelemetry plugin.
+
+    Args:
+        application (BaseApplicationProtocol): The application.
+
+    Returns:
+        None
     """
     del application

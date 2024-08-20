@@ -1,6 +1,4 @@
-"""
-Provides the configuration model for the OpenTelemetry plugin.
-"""
+"""Provides the configuration model for the OpenTelemetry plugin."""
 
 from typing import Annotated
 
@@ -9,9 +7,7 @@ from pydantic_core import Url
 
 
 class OpenTelemetryMeterConfig(BaseModel):
-    """
-    Provides the configuration model for the OpenTelemetry meter as sub-model.
-    """
+    """Provides the configuration model for the OpenTelemetry meter as sub-model."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -27,9 +23,7 @@ class OpenTelemetryMeterConfig(BaseModel):
 
 
 class OpenTelemetryTracerConfig(BaseModel):
-    """
-    Provides the configuration model for the OpenTelemetry tracer as sub-model.
-    """
+    """Provides the configuration model for the OpenTelemetry tracer as sub-model."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -52,9 +46,7 @@ class OpenTelemetryTracerConfig(BaseModel):
 
 
 class OpenTelemetryConfig(BaseModel):
-    """
-    Provides the configuration model for the OpenTelemetry plugin.
-    """
+    """Provides the configuration model for the OpenTelemetry plugin."""
 
     COLLECTOR_ENDPOINT_DEFAULT: str = "http://localhost:4317"
 

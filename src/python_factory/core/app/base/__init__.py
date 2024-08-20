@@ -1,6 +1,4 @@
-"""
-Package for the base application, abstract config classes and related exceptions.
-"""
+"""Package for the base application, abstract config classes and related exceptions."""
 
 from .application import BaseApplication
 from .config_abstract import AppConfigAbstract

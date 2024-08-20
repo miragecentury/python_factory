@@ -1,6 +1,4 @@
-"""
-Define the API for the Python Factory.
-"""
+"""Define the API for the Python Factory."""
 
 from fastapi import APIRouter
 

@@ -1,6 +1,4 @@
-"""
-Provides the App and AppConfig classes.
-"""
+"""Provides the App and AppConfig classes."""
 
 from .app import App, factory_for_app
 from .config import AppConfig

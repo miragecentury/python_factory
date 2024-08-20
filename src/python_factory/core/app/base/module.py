@@ -1,6 +1,4 @@
-"""
-Provide a generic module for injection bindings for the application.
-"""
+"""Provide a generic module for injection bindings for the application."""
 
 from typing import Generic, TypeVar, get_args
 
@@ -22,16 +20,18 @@ CONFIG_T = TypeVar("CONFIG_T", bound=AppConfigAbstract)  # pylint: disable=inval
 
 
 class GenericBaseApplicationModule(Generic[APP_T, CONFIG_T], injector.Module):
-    """
-    Generic application module.
-    """
+    """Generic application module."""
 
     def configure(self, binder: injector.Binder) -> None:
-        """
-        Configure injection bindings for the application
-        in a generic way.
-        """
+        """Configure injection bindings for the application in a generic way.
 
+        Args:
+            binder (injector.Binder): The injector binder.
+
+        Returns:
+            None
+
+        """
         # Retrieve the concrete application class and configuration class
         app_concrete_class, app_config_concrete_class = get_args(
             self.__orig_bases__[0]  # type: ignore[attr-defined]
@@ -54,7 +54,7 @@ class GenericBaseApplicationModule(Generic[APP_T, CONFIG_T], injector.Module):
         # Like the application class, bind the concrete application configuration
         # and the application configuration abstract class to the same provider.
         application_config_callable_provider = injector.CallableProvider(
-            self._build_generic_application_config
+            callable=self._build_generic_application_config
         )
         binder.bind(
             interface=app_config_concrete_class,
@@ -70,8 +70,8 @@ class GenericBaseApplicationModule(Generic[APP_T, CONFIG_T], injector.Module):
         binder.install(module=OpenTelemetryPluginModule)
 
     def _build_generic_application_config(self) -> CONFIG_T | None:
-        """
-        Generic Builder for the application configuration.
+        """Generic Builder for the application configuration.
+
         Use the concrete application class to build the concrete application
         configuration class.
 
@@ -87,7 +87,6 @@ class GenericBaseApplicationModule(Generic[APP_T, CONFIG_T], injector.Module):
             The application configuration
 
         """
-
         # Retrieve the concrete application class
         # and the concrete application configuration class
         app_concrete_class, app_config_concrete_class = get_args(
