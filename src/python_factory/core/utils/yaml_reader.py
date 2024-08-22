@@ -7,7 +7,10 @@ import re
 from pathlib import Path
 from typing import Any, cast
 
+from structlog.stdlib import BoundLogger, get_logger
 from yaml import SafeLoader
+
+logger: BoundLogger = get_logger()
 
 
 class UnableToReadYamlFileError(Exception):
@@ -52,7 +55,9 @@ class YamlFileReader:
         # Store whether to use environment injection
         self._use_environment_injection: bool = use_environment_injection
 
-    def _filter_data_with_base_key(self, yaml_data: dict[str, Any]) -> dict[str, Any]:
+    def _filter_data_with_base_key(
+        self, yaml_data: dict[str, Any]
+    ) -> dict[str, Any] | None:
         """Extracts the data from the YAML file with the base key.
 
         Args:
@@ -70,11 +75,12 @@ class YamlFileReader:
                 key: str = keys.pop(0)
                 try:
                     yaml_data = yaml_data[key]
-                except KeyError as exception:
-                    raise KeyError(
+                except KeyError:
+                    logger.warning(
                         f"Base key {key}"
                         " not found in YAML file" + " from {self._yaml_base_key}"
-                    ) from exception
+                    )
+                    return dict()
         return yaml_data
 
     def _read_yaml_file(self, file_path: Path) -> dict[str, Any]:
@@ -117,6 +123,9 @@ class YamlFileReader:
         Returns:
             dict: The data from the YAML file
             with environment variables injected.
+
+        Raises:
+            ValueError: If the YAML data is None.
         """
         if isinstance(yaml_data, dict):
             for key, value in yaml_data.items():
@@ -146,13 +155,16 @@ class YamlFileReader:
         """
         # Read the YAML file and filter the data with the base key
         try:
-            yaml_data: dict[str, Any] = self._filter_data_with_base_key(
+            yaml_data: dict[str, Any] | None = self._filter_data_with_base_key(
                 self._read_yaml_file(file_path=self._file_path)
             )
         except (FileNotFoundError, ValueError, KeyError) as exception:
             raise UnableToReadYamlFileError(
                 file_path=self._file_path, message=str(exception)
             ) from exception
+
+        if yaml_data is None:
+            return dict()
 
         if self._use_environment_injection:
             yaml_data_with_env_injected: dict[str, Any] = cast(

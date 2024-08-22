@@ -103,6 +103,7 @@ class TestYamlFileReader:
         data: str = f"""
             {yaml_test_key}: {yaml_test_value}
         """
+        expected_result: dict[Any, Any] = {}
         with patch("os.path.exists", return_value=True) as mock_exists:
             with patch(
                 "builtins.open", new_callable=mock_open, read_data=data
@@ -112,12 +113,13 @@ class TestYamlFileReader:
                     yaml_base_key=yaml_base_key,
                     use_environment_injection=False,
                 )
-                with pytest.raises(UnableToReadYamlFileError):
-                    yaml_reader.read()
+
+                result: dict[str, Any] = yaml_reader.read()
                 mock_exists.assert_called_once_with(Path("file_path"))
                 mock_open_mock.assert_called_once_with(
                     file=Path("file_path"), encoding="UTF-8"
                 )
+                assert result == expected_result
 
     def test_yaml_read_with_simple_env_value_to_inject(self) -> None:
         """Tests reading a YAML file with a simple environment value to inject."""
