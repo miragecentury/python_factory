@@ -3,6 +3,8 @@
 import uvicorn
 import uvicorn.server
 
+from python_factory.core.utils.log import clean_uvicorn_logger
+
 from .base import AppConfigAbstract, BaseApplication
 
 
@@ -28,13 +30,15 @@ class UvicornUtils:
         Returns:
             uvicorn.Config: The Uvicorn configuration.
         """
-        return uvicorn.Config(
+        config = uvicorn.Config(
             app=self._app.get_asgi_app(),
             host=self._config.host,
             port=self._config.port,
             reload=self._config.reload,
             workers=self._config.workers,
         )
+        clean_uvicorn_logger()
+        return config
 
     def serve(self) -> None:
         """Serve the application."""
