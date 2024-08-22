@@ -2,6 +2,8 @@
 
 from typing import cast
 
+from injector import Injector
+
 from python_factory.core.api import api
 
 from .config_abstract import AppConfigAbstract
@@ -39,6 +41,22 @@ class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
             self=cast(ApplicationPluginManagerAbstract, self)
         )
 
+    def attach_injector(self, injector: Injector) -> None:
+        """Attach the injector to the application.
+
+        Args:
+            injector (Injector): The injector to attach.
+
+        Returns:
+            None
+        """
+        self.injector: Injector = injector
+        self.get_asgi_app().state.injector = injector
+
     def get_config(self) -> AppConfigAbstract:
         """Get the application configuration."""
         return self._config
+
+    def get_injector(self) -> Injector:
+        """Get the injector."""
+        return self.injector
