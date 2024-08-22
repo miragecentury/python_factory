@@ -6,10 +6,7 @@ from unittest.mock import mock_open, patch
 
 import pytest
 
-from python_factory.core.utils.yaml_reader import (
-    UnableToReadYamlFileError,
-    YamlFileReader,
-)
+from python_factory.core.utils.yaml_reader import YamlFileReader
 
 
 class TestYamlFileReader:
