@@ -113,12 +113,12 @@ class YamlFileReader:
             return yaml_data
 
     def _inject_environment_variables(
-        self, yaml_data: dict[str, Any] | str | list[str]
-    ) -> dict[str, Any] | str | list[str]:
+        self, yaml_data: dict[str, Any] | str | list[str] | bool
+    ) -> dict[str, Any] | str | list[str] | bool:
         """Injects environment variables into the YAML data recursively.
 
         Args:
-            yaml_data (dict | str | list): The data from the YAML file.
+            yaml_data (dict | str | list | bool): The data from the YAML file.
 
         Returns:
             dict: The data from the YAML file
@@ -135,6 +135,8 @@ class YamlFileReader:
                 cast(str, self._inject_environment_variables(yaml_data=value))
                 for value in yaml_data
             ]
+        elif isinstance(yaml_data, bool):
+            return yaml_data
         else:
             while True:
                 match = self.re_pattern.search(yaml_data)
