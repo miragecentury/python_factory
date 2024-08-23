@@ -42,12 +42,14 @@ class AppModule(GenericBaseApplicationModule[App, AppConfig]):
         binder.bind(interface=BookService, to=BookService)
 
 
-def factory_for_app() -> App:
+def factory_for_app(injector_instance: injector.Injector | None = None) -> App:
     """Provides the application factory.
 
     TODO: Move this to core and transform it into a generic factory.
     """
-    injector_instance = injector.Injector(modules=[AppModule])
+    if injector_instance is None:
+        injector_instance = injector.Injector()
+        injector_instance.binder.install(AppModule)
     application: App = injector_instance.get(interface=App)
     application.attach_injector(injector=injector_instance)
     return application
