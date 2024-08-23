@@ -22,6 +22,9 @@ httpx = "^0.27.0"
 opentelemetry-instrumentation-fastapi = "^0.47b0"
 opentelemetry-propagator-b3 = "^1.26.0"
 
+[tool.poetry.group.test]
+optional = true
+
 [tool.poetry.group.test.dependencies]
 mypy = "^1.10.0"
 types-requests = "^2.32.0.20240712"
