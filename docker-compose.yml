@@ -1,12 +1,24 @@
 version: "3"
 
 services:
+  otel_collector:
+    image: otel/opentelemetry-collector:latest
+    volumes:
+      - ./docker/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"
+    networks:
+      - devcontainer
+      - default
   application:
     build:
       context: .
       dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
     networks:
       - devcontainer
+      - default
 
 networks:
   devcontainer:

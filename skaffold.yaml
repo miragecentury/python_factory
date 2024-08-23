@@ -1,40 +1,26 @@
 apiVersion: skaffold/v4beta11
 kind: Config
 metadata:
-  name: python-poetry-empty
+  name: python_factory_example
 build:
-  hooks:
-    before:
-      - command: ["pre-commit", "run", "--all-files"]
-
-    after: []
   artifacts:
-    - image: python-poetry-empty
-      hooks:
-        before:
-          - command: ["mkdir", "-p", "build/wheels"]
-          - command: ["poetry","export", "--no-interaction", "--format=requirements.txt", "--output=build/requirements.txt"]
-          - command: ["poetry","build", "--no-interaction", "--format=wheel", "--output=build/wheels"]
-          - command:
-            - "pip"
-            - "wheel"
-            - "--no-cache-dir"
-            - "--prefer-binary"
-            - "--require-hashes"
-            - "-r"
-            - "build/requirements.txt"
-            - --cache-dir
-            - "build/.pip-cache"
-            - "-w"
-            - "build/wheels"
+    - image: python_factory_example
       context: .
       runtimeType: python
-      docker:
-        cacheFrom:
-          - docker.io/library/python:3.12.4-slim-bullseye
-        dockerfile: "Dockerfile"
-        buildArgs:
-          DEV: "false"
+      buildpacks:
+        clearCache: false
+        projectDescriptor: project.toml
+        trustBuilder: true
+        builder: paketobuildpacks/builder-jammy-base
+        buildpacks:
+          - paketo-buildpacks/python
+
+      # docker:
+      #   cacheFrom:
+      #     - docker.io/library/python:3.12.4-slim-bullseye
+      #   dockerfile: "Dockerfile"
+      #   buildArgs:
+      #     DEV: "false"
   local:
     push: false
     useBuildkit: true
@@ -42,4 +28,4 @@ deploy:
   docker:
     useCompose: false
     images:
-      - python-poetry-empty
+      - python_factory_example

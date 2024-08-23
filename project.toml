@@ -6,4 +6,4 @@ id = "info.sysunicorns.python_factory_example"
 version = "0.1.0"
 
 [io.buildpacks]
-exclude = [".venv"]
+exclude = [".venv", ".devcontainer", ".github", ".mypy_cache", "build"]
