@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # Poetry setup
 poetry env use python3.12
 poetry install --with test --sync
@@ -21,3 +23,6 @@ fi
 
 # Create build directory if it doesn't exist
 mkdir -p build
+
+# Moving to the virtual environment
+poetry shell
