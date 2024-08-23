@@ -14,4 +14,4 @@ plugins:
     - opentelemetry_plugin
 
 opentelemetry:
-  activate: true
+  activate: "${OTEL_ACTIVE:false}"
