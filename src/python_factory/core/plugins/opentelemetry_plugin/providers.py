@@ -5,6 +5,9 @@ from typing import Any
 import injector
 from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.metrics import set_meter_provider
+from opentelemetry.propagate import set_global_textmap
+from opentelemetry.propagators.b3 import B3MultiFormat
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import (
@@ -16,8 +19,8 @@ from opentelemetry.sdk.resources import (
 )
 from opentelemetry.sdk.trace import SynchronousMultiSpanProcessor, TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.trace import set_tracer_provider
 
-from python_factory.core.app.base.application import BaseApplication
 from python_factory.core.plugins.opentelemetry_plugin.configs import (
     OpenTelemetryMeterConfig,
     OpenTelemetryTracerConfig,
@@ -103,12 +106,16 @@ class OpenTelemetryPluginModule(injector.Module):
         )
 
         # Setup the Meter Provider
-        return MeterProvider(
+        meter_provider = MeterProvider(
             resource=resource,
             metric_readers=[reader],
             shutdown_on_exit=True,
             views=[],
         )
+
+        set_meter_provider(meter_provider)
+
+        return meter_provider
 
     @injector.singleton
     @injector.provider
@@ -163,8 +170,11 @@ class OpenTelemetryPluginModule(injector.Module):
             span_processor=span_processor
         )
 
+        # Setup the TextMap Propagator for B3
+        set_global_textmap(http_text_format=B3MultiFormat())
+
         # Setup the Tracer Provider
-        return TracerProvider(
+        tracer_provider = TracerProvider(
             sampler=None,
             resource=resource,
             active_span_processor=synchronous_multi_span_processor,
@@ -172,6 +182,10 @@ class OpenTelemetryPluginModule(injector.Module):
             span_limits=None,
             shutdown_on_exit=True,
         )
+
+        set_tracer_provider(tracer_provider)
+
+        return tracer_provider
 
     @injector.singleton
     @injector.provider

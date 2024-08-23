@@ -19,6 +19,8 @@ uvicorn = "^0.30.5"
 opentelemetry-sdk = "^1.26.0"
 opentelemetry-exporter-otlp-proto-http = "^1.26.0"
 httpx = "^0.27.0"
+opentelemetry-instrumentation-fastapi = "^0.47b0"
+opentelemetry-propagator-b3 = "^1.26.0"
 
 [tool.poetry.group.test.dependencies]
 mypy = "^1.10.0"
@@ -47,6 +49,7 @@ addopts = "tests/units -n auto --color=yes"
 filterwarnings = [
     "ignore:.*Type google._upb._message.MessageMapContainer:DeprecationWarning",
     "ignore:.*Type google._upb._message.ScalarMapContainer:DeprecationWarning",
+    "ignore:.*pkg_resources is deprecated as an API.:DeprecationWarning",
 ]
 
 [tool.black]
