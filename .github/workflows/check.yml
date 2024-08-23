@@ -6,12 +6,14 @@ on:
 
 jobs:
   pre-commit:
+    env:
+      PYTHON_PATH: "./src:./tests:$PYTHON_PATH"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: "3.12"
       - name: Run image
         uses: abatilo/actions-poetry@v2
       - name: Setup a local virtual environment (if no poetry.toml file)
@@ -25,4 +27,8 @@ jobs:
           key: venv-${{ hashFiles('poetry.lock') }}
       - name: Install the project dependencies
         run: poetry install --with test
-      - uses: pre-commit/action@v3.0.1
+      - name: Run pre-commit
+        run: |
+          export PYTHONPATH=./src:./tests:$PYTHON_PATH
+          export PATH=./src:./tests:$PATH
+          poetry run pre-commit run --all-files
