@@ -11,7 +11,7 @@ currently being supported with security updates.
 
 ## Reporting a Vulnerability
 
-You can use Issue on the repository to report any vulnerabilities. 
+You can use Issue on the repository to report any vulnerabilities.
 https://github.com/miragecentury/python_factory/issues
 
 Fixes will be done as best effort.
