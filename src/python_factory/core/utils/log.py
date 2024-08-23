@@ -1,6 +1,7 @@
 """Provides a function to setup the logging configuration."""
 
 import logging
+import sys
 from enum import StrEnum, auto
 from typing import Any
 
@@ -70,11 +71,9 @@ def setup_log(
         structlog.stdlib.add_logger_name,
         structlog.stdlib.add_log_level,
         structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.format_exc_info,
         structlog.processors.UnicodeDecoder(),
         structlog.stdlib.PositionalArgumentsFormatter(),
         structlog.stdlib.ExtraAdder(),
-        structlog.processors.StackInfoRenderer(),
         structlog.processors.CallsiteParameterAdder(
             parameters={
                 structlog.processors.CallsiteParameter.MODULE: True,
@@ -82,15 +81,16 @@ def setup_log(
                 structlog.processors.CallsiteParameter.LINENO: True,
             }
         ),
-        _drop_color_message_key,
     ]
 
     log_renderer: structlog.dev.ConsoleRenderer | structlog.processors.JSONRenderer
     match mode:
         case LogModeEnum.CONSOLE:
-            processors.append(structlog.processors.ExceptionPrettyPrinter())
-            log_renderer = structlog.dev.ConsoleRenderer()
+            log_renderer = structlog.dev.ConsoleRenderer(
+                exception_formatter=structlog.dev.RichTracebackFormatter(),
+            )
         case LogModeEnum.JSON:
+            processors.append(_drop_color_message_key)
             # We rename the `event` key to `message` only in JSON logs,
             # as Datadog looks for the
             # `message` key but the pretty ConsoleRenderer looks for `event`
@@ -98,12 +98,14 @@ def setup_log(
             # Format the exception only for JSON logs, as we want
             # to pretty-print them when
             # using the ConsoleRenderer
-            processors.append(structlog.processors.format_exc_info)
+            processors.append(
+                structlog.processors.dict_tracebacks,
+            )
             log_renderer = structlog.processors.JSONRenderer()
 
     # Remove all existing loggers
     structlog.reset_defaults()
-    structlog_processors = processors.copy()
+    structlog_processors: list[structlog.typing.Processor] = processors.copy()
     structlog_processors.append(structlog.stdlib.ProcessorFormatter.wrap_for_formatter)
     structlog.configure(
         processors=structlog_processors,
@@ -126,6 +128,23 @@ def setup_log(
     handler = logging.StreamHandler()
     # Use OUR `ProcessorFormatter` to format all `logging` entries.
     handler.setFormatter(formatter)
-    root_logger = logging.getLogger()
+    root_logger: logging.Logger = logging.getLogger()
     root_logger.addHandler(handler)
     root_logger.setLevel(log_level.upper())
+
+    def handle_exception(exc_type: Any, exc_value: Any, exc_traceback: Any) -> None:
+        """Handle uncaught exceptions.
+
+        Log any uncaught exception instead of letting it be printed by Python
+        (but leave KeyboardInterrupt untouched to allow users to Ctrl+C to stop)
+        See https://stackoverflow.com/a/16993115/3641865
+        """
+        if issubclass(exc_type, KeyboardInterrupt):
+            sys.__excepthook__(exc_type, exc_value, exc_traceback)
+            return
+
+        _logger.error(
+            "Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback)
+        )
+
+    sys.excepthook = handle_exception
