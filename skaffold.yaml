@@ -29,3 +29,9 @@ deploy:
     useCompose: false
     images:
       - python_factory_example
+portForward:
+  - resourceType: container
+    resourceName: python_factory_example
+    port: 8000
+    localPort: 8000
+    address: localhost
