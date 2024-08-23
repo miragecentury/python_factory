@@ -12,3 +12,6 @@ application:
 plugins:
   activate:
     - opentelemetry_plugin
+
+opentelemetry:
+  activate: true
