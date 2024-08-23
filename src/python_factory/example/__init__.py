@@ -14,7 +14,7 @@ def application_factory(injector_instance: injector.Injector | None = None) -> A
 
 def main() -> None:
     """Main function."""
-    setup_log(mode=LogModeEnum.JSON)
+    setup_log(mode=LogModeEnum.CONSOLE)
     application: App = application_factory()
     uvicorn_utils = UvicornUtils(app=application, config=application.get_config())
 
