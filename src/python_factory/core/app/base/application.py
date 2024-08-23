@@ -41,6 +41,10 @@ class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
             self=cast(ApplicationPluginManagerAbstract, self)
         )
 
+        self._fastapi_app.add_event_handler(  # pyright: ignore[reportUnknownMemberType]
+            event_type="startup", func=self._on_startup
+        )
+
     def attach_injector(self, injector: Injector) -> None:
         """Attach the injector to the application.
 
@@ -52,6 +56,7 @@ class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
         """
         self.injector: Injector = injector
         self.get_asgi_app().state.injector = injector
+        self._on_load()
 
     def get_config(self) -> AppConfigAbstract:
         """Get the application configuration."""

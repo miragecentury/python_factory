@@ -2,8 +2,6 @@
 
 from enum import StrEnum, auto
 
-from .protocols import PluginProtocol
-
 
 class PluginsEnum(StrEnum):
     """Enumeration for the plugins."""
@@ -13,5 +11,4 @@ class PluginsEnum(StrEnum):
 
 __all__: list[str] = [
     "PluginsEnum",
-    "PluginProtocol",
 ]

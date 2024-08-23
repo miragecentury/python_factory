@@ -1,10 +1,30 @@
-"""Defines the protocols for the plugins."""
+"""Protocols for the base application."""
 
-from typing import Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from injector import Module
+from fastapi import FastAPI
+from injector import Injector, Module, inject
 
-from python_factory.core.app.base.protocols import BaseApplicationProtocol
+if TYPE_CHECKING:
+    from python_factory.core.app.base.config_abstract import AppConfigAbstract
+
+
+class BaseApplicationProtocol(Protocol):
+    """Protocol for the base application."""
+
+    PACKAGE_NAME: str
+
+    def get_config(self) -> "AppConfigAbstract":
+        """Get the application configuration."""
+        raise NotImplementedError
+
+    def get_asgi_app(self) -> FastAPI:
+        """Get the ASGI application."""
+        raise NotImplementedError
+
+    def get_injector(self) -> Injector:
+        """Get the injector."""
+        raise NotImplementedError
 
 
 @runtime_checkable
@@ -29,6 +49,19 @@ class PluginProtocol(Protocol):
         """
         raise NotImplementedError
 
+    @inject
+    def on_load(self, application: BaseApplicationProtocol) -> None:
+        """The actions to perform on load for the plugin.
+
+        Args:
+            application (BaseApplicationProtocol): The application.
+
+        Returns:
+            None
+        """
+        raise NotImplementedError
+
+    @inject
     async def on_startup(self, application: BaseApplicationProtocol) -> None:
         """The actions to perform on startup for the plugin.
 

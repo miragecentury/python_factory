@@ -11,6 +11,7 @@ from python_factory.core.utils.configs import (
     build_config_from_file_in_package,
 )
 
+from ...protocols import BaseApplicationProtocol
 from .application import BaseApplication
 from .config_abstract import AppConfigAbstract
 from .exceptions import ApplicationConfigFactoryException
@@ -47,6 +48,11 @@ class GenericBaseApplicationModule(Generic[APP_T, CONFIG_T], injector.Module):
         )
         binder.bind(
             interface=BaseApplication,
+            to=application_class_provider,
+            scope=injector.SingletonScope,
+        )
+        binder.bind(
+            interface=BaseApplicationProtocol,  # type: ignore
             to=application_class_provider,
             scope=injector.SingletonScope,
         )

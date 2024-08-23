@@ -22,6 +22,7 @@ from python_factory.core.plugins.opentelemetry_plugin.configs import (
     OpenTelemetryMeterConfig,
     OpenTelemetryTracerConfig,
 )
+from python_factory.core.protocols import BaseApplicationProtocol
 from python_factory.core.utils.importlib import get_path_file_in_package
 from python_factory.core.utils.yaml_reader import (
     UnableToReadYamlFileError,
@@ -38,12 +39,12 @@ class OpenTelemetryPluginModule(injector.Module):
     @injector.singleton
     @injector.provider
     def resource_factory(
-        self, application: injector.Inject[BaseApplication]
+        self, application: injector.Inject[BaseApplicationProtocol]
     ) -> Resource:
         """Build a resource object for OpenTelemetry from the application and configs.
 
         Args:
-            application (BaseApplication): The application object.
+            application (BaseApplicationProtocol): The application object.
 
         Returns:
             Resource: The resource object for OpenTelemetry.
@@ -176,12 +177,12 @@ class OpenTelemetryPluginModule(injector.Module):
     @injector.provider
     def provider_open_telemetry_config(
         self,
-        base_application: injector.Inject["BaseApplication"],
+        base_application: injector.Inject["BaseApplicationProtocol"],
     ) -> OpenTelemetryConfig:
         """Provide the OpenTelemetry configuration.
 
         Args:
-            base_application (BaseApplication): The base application object.
+            base_application (BaseApplicationProtocol): The base application object.
 
         Returns:
             OpenTelemetryConfig: The OpenTelemetry configuration object.

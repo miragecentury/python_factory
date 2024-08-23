@@ -3,11 +3,12 @@
 from abc import ABC
 from importlib import import_module
 from types import ModuleType
+from typing import cast
 
-import rich
 from pydantic import BaseModel, ConfigDict, Field
 
-from python_factory.core.plugins import PluginProtocol, PluginsEnum
+from python_factory.core.plugins import PluginsEnum
+from python_factory.core.protocols import BaseApplicationProtocol, PluginProtocol
 from python_factory.core.utils.configs import (
     UnableToReadConfigFileError,
     ValueErrorConfigError,
@@ -54,8 +55,6 @@ class ApplicationPluginManagerAbstract(ABC):
 
         self._check_pre_conditions()
 
-        rich.inspect(self._plugins)
-
     def _check_pre_conditions(self) -> None:
         """Check the pre-conditions for the plugins.
 
@@ -79,12 +78,19 @@ class ApplicationPluginManagerAbstract(ABC):
                     f"The plugin {plugin.value} does not implement the PluginProtocol"
                 )
 
-            if not plugin_module.pre_conditions_check(application=self):
+            if not plugin_module.pre_conditions_check(
+                application=cast(BaseApplicationProtocol, self)
+            ):
                 raise ApplicationPluginManagerException(
                     f"The plugin {plugin.value} does not meet the pre-conditions"
                 )
 
             self._plugins.append(plugin_module)
+
+    def _on_load(self) -> None:
+        """Actions to perform on load for the plugins."""
+        for plugin in self._plugins:
+            plugin.on_load(application=cast(BaseApplicationProtocol, self))
 
     def _build_plugins_activation_list(self) -> PluginsActivationList:
         """Build the plugins activation list.
@@ -116,3 +122,8 @@ class ApplicationPluginManagerAbstract(ABC):
             ) from exception
 
         return config
+
+    async def _on_startup(self) -> None:
+        """Actions to perform on startup for the plugins."""
+        for plugin in self._plugins:
+            await plugin.on_startup(application=cast(BaseApplicationProtocol, self))

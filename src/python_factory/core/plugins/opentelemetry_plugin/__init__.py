@@ -2,7 +2,7 @@
 
 from injector import Module
 
-from python_factory.core.app.base.protocols import BaseApplicationProtocol
+from python_factory.core.protocols import BaseApplicationProtocol
 
 from .configs import OpenTelemetryConfig
 from .exceptions import OpenTelemetryPluginBaseException, OpenTelemetryPluginConfigError
@@ -31,7 +31,10 @@ def pre_conditions_check(application: BaseApplicationProtocol) -> bool:
     return True
 
 
-async def on_startup(application: BaseApplicationProtocol) -> None:
+@inject
+async def on_startup(
+    application: BaseApplicationProtocol,
+) -> None:
     """Actions to perform on startup for the OpenTelemetry plugin.
 
     Args:
