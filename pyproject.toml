@@ -19,7 +19,7 @@ uvicorn = "^0.30.5"
 opentelemetry-sdk = "^1.26.0"
 opentelemetry-exporter-otlp-proto-http = "^1.26.0"
 httpx = "^0.27.0"
-opentelemetry-instrumentation-fastapi = "^0.47b0"
+opentelemetry-instrumentation-fastapi = "^0.48b0"
 opentelemetry-propagator-b3 = "^1.26.0"
 
 [tool.poetry.group.test]
