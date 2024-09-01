@@ -38,7 +38,10 @@
         "GitHub.copilot-chat",
         "ms-azuretools.vscode-docker",
         "ms-vsliveshare.vsliveshare",
-        "eamodio.gitlens"
+        "eamodio.gitlens",
+        "ms-python.mypy-type-checker",
+        "charliermarsh.ruff",
+        "ms-python.isort"
       ]
     }
   },
