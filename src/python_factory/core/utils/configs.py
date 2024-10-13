@@ -10,8 +10,8 @@ from python_factory.core.utils.yaml_reader import (
     YamlFileReader,
 )
 
-GENERIC_CONFIG = TypeVar(  # pylint: disable=invalid-name
-    "GENERIC_CONFIG", bound=BaseModel
+GenericConfigBaseModelType = TypeVar(  # pylint: disable=invalid-name
+    "GenericConfigBaseModelType", bound=BaseModel
 )
 
 
@@ -22,13 +22,19 @@ class ConfigBaseException(BaseException):
 
 
 class UnableToReadConfigFileError(ConfigBaseException):
-    """Exception raised when the configuration file cannot be read."""
+    """Exception raised when the configuration file cannot be read.
+
+    Mainly used when the file is not found or the file is not a YAML file.
+    """
 
     pass
 
 
 class ValueErrorConfigError(ConfigBaseException):
-    """Exception raised when the configuration file cannot be read."""
+    """Exception raised when the configuration object cannot be created.
+
+    Mainly used when validation fails when creating the configuration object.
+    """
 
     pass
 
@@ -36,19 +42,19 @@ class ValueErrorConfigError(ConfigBaseException):
 def build_config_from_file_in_package(
     package_name: str,
     filename: str,
-    config_class: type[GENERIC_CONFIG],
+    config_class: type[GenericConfigBaseModelType],
     yaml_base_key: str,
-) -> GENERIC_CONFIG:
+) -> GenericConfigBaseModelType:
     """Build a configuration object from a file in a package.
 
     Args:
         package_name (str): The package name.
         filename (str): The filename.
-        config_class (type[GENERIC_CONFIG]): The configuration class.
+        config_class (type[GenericConfigBaseModelType]): The configuration class.
         yaml_base_key (str): The base key in the YAML file.
 
     Returns:
-        GENERIC_CONFIG: The configuration object.
+        GenericConfigBaseModelType: The configuration object.
 
     Raises:
         UnableToReadConfigFileError: If the configuration file cannot be read.
@@ -71,7 +77,7 @@ def build_config_from_file_in_package(
 
     # Create the application configuration model
     try:
-        config: GENERIC_CONFIG = config_class(**yaml_file_content)
+        config: GenericConfigBaseModelType = config_class(**yaml_file_content)
     except ValueError as exception:
         raise ValueErrorConfigError(
             "Unable to create the configuration model."
