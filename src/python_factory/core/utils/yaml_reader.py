@@ -113,8 +113,8 @@ class YamlFileReader:
             return yaml_data
 
     def _inject_environment_variables(
-        self, yaml_data: dict[str, Any] | str | list[str] | bool
-    ) -> dict[str, Any] | str | list[str] | bool:
+        self, yaml_data: dict[str, Any] | str | list[str] | bool | int
+    ) -> dict[str, Any] | str | list[str] | bool | int:
         """Injects environment variables into the YAML data recursively.
 
         Args:
@@ -135,9 +135,9 @@ class YamlFileReader:
                 cast(str, self._inject_environment_variables(yaml_data=value))
                 for value in yaml_data
             ]
-        elif isinstance(yaml_data, bool):
+        elif isinstance(yaml_data, bool) or isinstance(yaml_data, int):
             return yaml_data
-        else:
+        elif isinstance(yaml_data, str):  # type: ignore
             while True:
                 match = self.re_pattern.search(yaml_data)
                 if match is None:
@@ -146,7 +146,8 @@ class YamlFileReader:
                 env_default = match.group(2)
                 env_value = os.getenv(env_key, env_default)
                 yaml_data = yaml_data.replace(match.group(0), env_value)
-
+        else:
+            raise ValueError(f"Type not supported: {type(yaml_data)}")
         return yaml_data
 
     def read(self) -> dict[str, Any]:

@@ -228,3 +228,53 @@ class TestYamlFileReader:
                     )
 
                     assert read_data == expected_result
+
+    def test_yaml_read_with_int_value(self) -> None:
+        """Tests reading a YAML file with an integer value."""
+        yaml_test_key = "key"
+        yaml_test_value = 42
+        data: str = f"""
+            {yaml_test_key}: {yaml_test_value}
+        """
+        with patch("os.path.exists", return_value=True) as mock_exists:
+            with patch(
+                "builtins.open", new_callable=mock_open, read_data=data
+            ) as mock_open_mock:
+                yaml_reader = YamlFileReader(
+                    file_path=Path("file_path"),
+                    yaml_base_key=None,
+                    use_environment_injection=False,
+                )
+                read_data: dict[str, Any] = yaml_reader.read()
+
+                mock_exists.assert_called_once_with(Path("file_path"))
+                mock_open_mock.assert_called_once_with(
+                    file=Path("file_path"), encoding="UTF-8"
+                )
+
+                assert read_data == {yaml_test_key: yaml_test_value}
+
+    def test_yaml_read_with_bool_value(self) -> None:
+        """Tests reading a YAML file with a boolean value."""
+        yaml_test_key = "key"
+        yaml_test_value = True
+        data: str = f"""
+            {yaml_test_key}: {yaml_test_value}
+        """
+        with patch("os.path.exists", return_value=True) as mock_exists:
+            with patch(
+                "builtins.open", new_callable=mock_open, read_data=data
+            ) as mock_open_mock:
+                yaml_reader = YamlFileReader(
+                    file_path=Path("file_path"),
+                    yaml_base_key=None,
+                    use_environment_injection=False,
+                )
+                read_data: dict[str, Any] = yaml_reader.read()
+
+                mock_exists.assert_called_once_with(Path("file_path"))
+                mock_open_mock.assert_called_once_with(
+                    file=Path("file_path"), encoding="UTF-8"
+                )
+
+                assert read_data == {yaml_test_key: yaml_test_value}
