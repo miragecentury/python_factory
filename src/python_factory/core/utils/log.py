@@ -81,6 +81,7 @@ def setup_log(
                 structlog.processors.CallsiteParameter.LINENO: True,
             }
         ),
+        _drop_color_message_key,
     ]
 
     log_renderer: structlog.dev.ConsoleRenderer | structlog.processors.JSONRenderer
@@ -90,7 +91,6 @@ def setup_log(
                 exception_formatter=structlog.dev.RichTracebackFormatter(),
             )
         case LogModeEnum.JSON:
-            processors.append(_drop_color_message_key)
             # We rename the `event` key to `message` only in JSON logs,
             # as Datadog looks for the
             # `message` key but the pretty ConsoleRenderer looks for `event`
