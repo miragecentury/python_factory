@@ -14,7 +14,7 @@ class App(BaseApplication):
     PACKAGE_NAME: str = "python_factory.example"
 
     def __init__(self, config: injector.Inject[AppConfig]) -> None:
-        """Instanciate the application.
+        """Instanciate the application with the configuration and the API router.
 
         Args:
             config (AppConfig): The application configuration.
@@ -51,6 +51,7 @@ def factory_for_app(injector_instance: injector.Injector | None = None) -> App:
     """Provides the application factory.
 
     TODO: Move this to core and transform it into a generic factory.
+    Args will be the application class and the module class.
     """
     if injector_instance is None:
         injector_instance = injector.Injector()

@@ -4,7 +4,9 @@ from python_factory.core.app import AppConfigAbstract
 
 
 class AppConfig(AppConfigAbstract):
-    """The application configuration."""
+    """The application configuration.
 
-    title: str = "Python Factory Example"
-    description: str = "An example application for Python Factory."
+    Values are set in application.yaml.
+    """
+
+    pass

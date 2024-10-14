@@ -13,7 +13,11 @@ def application_factory(injector_instance: injector.Injector | None = None) -> A
 
 
 def main() -> None:
-    """Main function."""
+    """Main function.
+
+    TODO: Relocate some behavior to the core package.
+    This must be the same for all applications.
+    """
     setup_log(mode=LogModeEnum.CONSOLE)
     application: App = application_factory()
     uvicorn_utils = UvicornUtils(app=application, config=application.get_config())
