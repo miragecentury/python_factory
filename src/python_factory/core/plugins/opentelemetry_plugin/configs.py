@@ -66,6 +66,11 @@ class OpenTelemetryConfig(BaseModel):
         description="The timeout in seconds for the collector.",
     )
 
+    closing_timeout: int = Field(
+        default=10,
+        description="The closing timeout in seconds for the collector.",
+    )
+
     meter_config: OpenTelemetryMeterConfig | None = Field(
         default_factory=OpenTelemetryMeterConfig,
         description="The meter configuration.",
@@ -74,4 +79,9 @@ class OpenTelemetryConfig(BaseModel):
     tracer_config: OpenTelemetryTracerConfig | None = Field(
         default_factory=OpenTelemetryTracerConfig,
         description="The tracer configuration.",
+    )
+
+    excluded_urls: list[str] = Field(
+        default_factory=list,
+        description="The excluded URLs for both the metrics and traces.",
     )

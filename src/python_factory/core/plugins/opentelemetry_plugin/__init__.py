@@ -1,5 +1,7 @@
 """OpenTelemetry Plugin Module."""
 
+import asyncio
+
 from injector import Module, inject
 from opentelemetry.instrumentation.fastapi import (  # pyright: ignore[reportMissingTypeStubs]
     FastAPIInstrumentor,
@@ -50,10 +52,14 @@ def on_load(
     """
     tracer_provider: TracerProvider = application.get_injector().get(TracerProvider)
     meter_provider: MeterProvider = application.get_injector().get(MeterProvider)
+    otel_config: OpenTelemetryConfig = application.get_injector().get(
+        OpenTelemetryConfig
+    )
     FastAPIInstrumentor.instrument_app(  # pyright: ignore[reportUnknownMemberType]
         app=application.get_asgi_app(),
         tracer_provider=tracer_provider,
         meter_provider=meter_provider,
+        excluded_urls=otel_config.excluded_urls,
     )
 
     _logger.debug("OpenTelemetry plugin loaded.")
@@ -84,5 +90,41 @@ async def on_shutdown(application: BaseApplicationProtocol) -> None:
     Returns:
         None
     """
-    del application
-    _logger.debug("OpenTelemetry plugin stopped.")
+    tracer_provider: TracerProvider = application.get_injector().get(TracerProvider)
+    meter_provider: MeterProvider = application.get_injector().get(MeterProvider)
+    otel_config: OpenTelemetryConfig = application.get_injector().get(
+        OpenTelemetryConfig
+    )
+
+    seconds_to_ms_multiplier: int = 1000
+
+    async def close_tracer_provider() -> None:
+        """Close the tracer provider."""
+        tracer_provider.force_flush(
+            timeout_millis=otel_config.closing_timeout * seconds_to_ms_multiplier
+        )
+        # No Delay for the shutdown of the tracer provider
+        tracer_provider.shutdown()
+
+    async def close_meter_provider() -> None:
+        """Close the meter provider.
+
+        Split the timeout in half for the flush and shutdown.
+        """
+        meter_provider.force_flush(
+            timeout_millis=int(otel_config.closing_timeout / 2)
+            * seconds_to_ms_multiplier
+        )
+        meter_provider.shutdown(
+            timeout_millis=int(otel_config.closing_timeout / 2)
+            * seconds_to_ms_multiplier
+        )
+
+    _logger.debug("OpenTelemetry plugin stop requested. Flushing and closing...")
+
+    await asyncio.gather(
+        close_tracer_provider(),
+        close_meter_provider(),
+    )
+
+    _logger.debug("OpenTelemetry plugin closed.")
