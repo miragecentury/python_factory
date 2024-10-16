@@ -42,7 +42,10 @@ class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
         )
 
         self._fastapi_app.add_event_handler(  # pyright: ignore[reportUnknownMemberType]
-            event_type="startup", func=self._on_startup
+            event_type="startup", func=self.plugins_on_startup
+        )
+        self._fastapi_app.add_event_handler(  # pyright: ignore[reportUnknownMemberType]
+            event_type="shutdown", func=self.plugins_on_shutdown
         )
 
     def attach_injector(self, injector: Injector) -> None:

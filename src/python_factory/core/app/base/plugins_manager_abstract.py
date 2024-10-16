@@ -123,7 +123,12 @@ class ApplicationPluginManagerAbstract(ABC):
 
         return config
 
-    async def _on_startup(self) -> None:
+    async def plugins_on_startup(self) -> None:
         """Actions to perform on startup for the plugins."""
         for plugin in self._plugins:
             await plugin.on_startup(application=cast(BaseApplicationProtocol, self))
+
+    async def plugins_on_shutdown(self) -> None:
+        """Actions to perform on shutdown for the plugins."""
+        for plugin in self._plugins:
+            await plugin.on_shutdown(application=cast(BaseApplicationProtocol, self))
