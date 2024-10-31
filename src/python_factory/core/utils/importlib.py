@@ -22,9 +22,7 @@ def get_path_file_in_package(filename: str, package: str) -> Path:
     try:
         path: Path = Path(str(files(package).joinpath(filename)))
     except FileNotFoundError as exception:
-        raise FileNotFoundError(
-            f"File {filename} not found in package {package}"
-        ) from exception
+        raise FileNotFoundError(f"File {filename} not found in package {package}") from exception
     except ImportError as exception:
         raise ImportError(f"Package {package} not found") from exception
     return path

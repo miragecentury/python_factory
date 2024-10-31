@@ -29,9 +29,7 @@ class UnableToReadYamlFileError(Exception):
 class YamlFileReader:
     """Handles reading YAML files and converting them to Pydantic models."""
 
-    re_pattern: re.Pattern[str] = re.compile(
-        r"\${([A-Za-z0-9\-\_]+):?([A-Za-z0-9\-\_]*)?}"
-    )
+    re_pattern: re.Pattern[str] = re.compile(r"\${([A-Za-z0-9\-\_]+):?([A-Za-z0-9\-\_]*)?}")
 
     def __init__(
         self,
@@ -55,9 +53,7 @@ class YamlFileReader:
         # Store whether to use environment injection
         self._use_environment_injection: bool = use_environment_injection
 
-    def _filter_data_with_base_key(
-        self, yaml_data: dict[str, Any]
-    ) -> dict[str, Any] | None:
+    def _filter_data_with_base_key(self, yaml_data: dict[str, Any]) -> dict[str, Any] | None:
         """Extracts the data from the YAML file with the base key.
 
         Args:
@@ -76,10 +72,7 @@ class YamlFileReader:
                 try:
                     yaml_data = yaml_data[key]
                 except KeyError:
-                    logger.warning(
-                        f"Base key {key}"
-                        " not found in YAML file" + " from {self._yaml_base_key}"
-                    )
+                    logger.warning(f"Base key {key}" " not found in YAML file" + " from {self._yaml_base_key}")
                     return dict()
         return yaml_data
 
@@ -131,10 +124,7 @@ class YamlFileReader:
             for key, value in yaml_data.items():
                 yaml_data[key] = self._inject_environment_variables(value)
         elif isinstance(yaml_data, list):
-            yaml_data = [
-                cast(str, self._inject_environment_variables(yaml_data=value))
-                for value in yaml_data
-            ]
+            yaml_data = [cast(str, self._inject_environment_variables(yaml_data=value)) for value in yaml_data]
         elif isinstance(yaml_data, bool) or isinstance(yaml_data, int):
             return yaml_data
         elif isinstance(yaml_data, str):  # type: ignore
@@ -162,9 +152,7 @@ class YamlFileReader:
                 self._read_yaml_file(file_path=self._file_path)
             )
         except (FileNotFoundError, ValueError, KeyError) as exception:
-            raise UnableToReadYamlFileError(
-                file_path=self._file_path, message=str(exception)
-            ) from exception
+            raise UnableToReadYamlFileError(file_path=self._file_path, message=str(exception)) from exception
 
         if yaml_data is None:
             return dict()

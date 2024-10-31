@@ -36,9 +36,7 @@ class FastAPIConfigAbstract(ABC, BaseModel):
 class FastAPIAbstract(ABC):
     """Application integration with FastAPI."""
 
-    def __init__(
-        self, config: FastAPIConfigAbstract, api_router: APIRouter | None = None
-    ) -> None:
+    def __init__(self, config: FastAPIConfigAbstract, api_router: APIRouter | None = None) -> None:
         """Instanciate the FastAPI application.
 
         Args:

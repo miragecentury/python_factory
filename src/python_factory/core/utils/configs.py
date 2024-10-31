@@ -10,9 +10,7 @@ from python_factory.core.utils.yaml_reader import (
     YamlFileReader,
 )
 
-GenericConfigBaseModelType = TypeVar(  # pylint: disable=invalid-name
-    "GenericConfigBaseModelType", bound=BaseModel
-)
+GenericConfigBaseModelType = TypeVar("GenericConfigBaseModelType", bound=BaseModel)  # pylint: disable=invalid-name
 
 
 class ConfigBaseException(BaseException):
@@ -71,16 +69,12 @@ def build_config_from_file_in_package(
             use_environment_injection=True,
         ).read()
     except (FileNotFoundError, ImportError, UnableToReadYamlFileError) as exception:
-        raise UnableToReadConfigFileError(
-            "Unable to read the application configuration file."
-        ) from exception
+        raise UnableToReadConfigFileError("Unable to read the application configuration file.") from exception
 
     # Create the application configuration model
     try:
         config: GenericConfigBaseModelType = config_class(**yaml_file_content)
     except ValueError as exception:
-        raise ValueErrorConfigError(
-            "Unable to create the configuration model."
-        ) from exception
+        raise ValueErrorConfigError("Unable to create the configuration model.") from exception
 
     return config

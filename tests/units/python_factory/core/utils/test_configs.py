@@ -43,25 +43,17 @@ class TestBuildConfigFromFileInPackage:
 
         """
         # mock get_path_file_in_package
-        with patch(
-            "python_factory.core.utils.configs.get_path_file_in_package"
-        ) as mock_get_path_file_in_package:
+        with patch("python_factory.core.utils.configs.get_path_file_in_package") as mock_get_path_file_in_package:
             mock_get_path_file_in_package.return_value = mock_value_file_path
 
-            with patch(
-                "python_factory.core.utils.configs.YamlFileReader"
-            ) as mock_yamlfilereader_constructor:
+            with patch("python_factory.core.utils.configs.YamlFileReader") as mock_yamlfilereader_constructor:
                 # mock YamlFileReader Class behavior
                 mock_yaml_file_reader_object = MagicMock()
                 if side_effects is not None:
                     mock_yaml_file_reader_object.read.side_effect = side_effects
                 else:
-                    mock_yaml_file_reader_object.read.return_value = (
-                        mock_value_file_content[base_key]
-                    )
-                mock_yamlfilereader_constructor.return_value = (
-                    mock_yaml_file_reader_object
-                )
+                    mock_yaml_file_reader_object.read.return_value = mock_value_file_content[base_key]
+                mock_yamlfilereader_constructor.return_value = mock_yaml_file_reader_object
 
                 yield (
                     mock_get_path_file_in_package,

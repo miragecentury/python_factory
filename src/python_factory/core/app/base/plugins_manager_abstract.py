@@ -43,15 +43,11 @@ class ApplicationPluginManagerAbstract(ABC):
     def __init__(self) -> None:
         """Instanciate the application plugin manager."""
         if self.PACKAGE_NAME == "":
-            raise ValueError(
-                "The package name must be set in the concrete plugin manager class."
-            )
+            raise ValueError("The package name must be set in the concrete plugin manager class.")
 
         self._plugins: list[PluginProtocol] = []
 
-        self._plugins_activation_list: PluginsActivationList = (
-            self._build_plugins_activation_list()
-        )
+        self._plugins_activation_list: PluginsActivationList = self._build_plugins_activation_list()
 
         self._check_pre_conditions()
 
@@ -65,25 +61,17 @@ class ApplicationPluginManagerAbstract(ABC):
         """
         for plugin in self._plugins_activation_list.activate:
             try:
-                plugin_module: ModuleType = import_module(
-                    name=f"{self.PLUGIN_PACKAGE_NAME}.{plugin.value}"
-                )
+                plugin_module: ModuleType = import_module(name=f"{self.PLUGIN_PACKAGE_NAME}.{plugin.value}")
             except ImportError as exception:
-                raise ApplicationPluginManagerException(
-                    f"Unable to import the plugin {plugin.value}"
-                ) from exception
+                raise ApplicationPluginManagerException(f"Unable to import the plugin {plugin.value}") from exception
 
             if not isinstance(plugin_module, PluginProtocol):
                 raise ApplicationPluginManagerException(
                     f"The plugin {plugin.value} does not implement the PluginProtocol"
                 )
 
-            if not plugin_module.pre_conditions_check(
-                application=cast(BaseApplicationProtocol, self)
-            ):
-                raise ApplicationPluginManagerException(
-                    f"The plugin {plugin.value} does not meet the pre-conditions"
-                )
+            if not plugin_module.pre_conditions_check(application=cast(BaseApplicationProtocol, self)):
+                raise ApplicationPluginManagerException(f"The plugin {plugin.value} does not meet the pre-conditions")
 
             self._plugins.append(plugin_module)
 
@@ -113,9 +101,7 @@ class ApplicationPluginManagerAbstract(ABC):
                 yaml_base_key="plugins",
             )
         except UnableToReadConfigFileError as exception:
-            raise ApplicationPluginManagerException(
-                "Unable to read the application configuration file"
-            ) from exception
+            raise ApplicationPluginManagerException("Unable to read the application configuration file") from exception
         except ValueErrorConfigError as exception:
             raise ApplicationPluginManagerException(
                 "Unable to create the application configuration model"

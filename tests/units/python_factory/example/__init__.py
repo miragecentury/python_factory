@@ -11,9 +11,7 @@ class TestExampleClassParent:
 
     def binder_configure(self, binder: injector.Binder) -> None:
         """Configure the binder for the test."""
-        binder.bind(
-            interface=OpenTelemetryConfig, to=OpenTelemetryConfig(activate=False)
-        )
+        binder.bind(interface=OpenTelemetryConfig, to=OpenTelemetryConfig(activate=False))
 
     def application_factory_for_test(self) -> App:
         """Create an application for testing."""

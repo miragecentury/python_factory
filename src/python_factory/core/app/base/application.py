@@ -29,17 +29,11 @@ class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
             ValueError: If the package name is not set.
         """
         if self.PACKAGE_NAME == "":
-            raise ValueError(
-                "The package name must be set in the concrete application class."
-            )
+            raise ValueError("The package name must be set in the concrete application class.")
 
         self._config: AppConfigAbstract = config
-        FastAPIAbstract.__init__(
-            self=cast(FastAPIAbstract, self), config=self._config, api_router=api
-        )
-        ApplicationPluginManagerAbstract.__init__(
-            self=cast(ApplicationPluginManagerAbstract, self)
-        )
+        FastAPIAbstract.__init__(self=cast(FastAPIAbstract, self), config=self._config, api_router=api)
+        ApplicationPluginManagerAbstract.__init__(self=cast(ApplicationPluginManagerAbstract, self))
 
         self._fastapi_app.add_event_handler(  # pyright: ignore[reportUnknownMemberType]
             event_type="startup", func=self.plugins_on_startup

@@ -42,9 +42,7 @@ class AppModule(GenericBaseApplicationModule[App, AppConfig]):
 
         # Book Service as Singleton due to the ClassVar book_store (shared state)
         # It's temporary, we will replace it with a database later
-        binder.bind(
-            interface=BookService, to=BookService, scope=injector.SingletonScope
-        )
+        binder.bind(interface=BookService, to=BookService, scope=injector.SingletonScope)
 
 
 def factory_for_app(injector_instance: injector.Injector | None = None) -> App:

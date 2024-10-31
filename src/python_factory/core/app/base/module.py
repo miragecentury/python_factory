@@ -34,9 +34,7 @@ class GenericBaseApplicationModule(Generic[APP_T, CONFIG_T], injector.Module):
 
         """
         # Retrieve the concrete application class and configuration class
-        app_concrete_class, app_config_concrete_class = get_args(
-            self.__orig_bases__[0]  # type: ignore[attr-defined]
-        )
+        app_concrete_class, app_config_concrete_class = get_args(self.__orig_bases__[0])  # type: ignore[attr-defined]
 
         # Bind the concreate application type and the base application type
         # to the same provider.
@@ -95,15 +93,11 @@ class GenericBaseApplicationModule(Generic[APP_T, CONFIG_T], injector.Module):
         """
         # Retrieve the concrete application class
         # and the concrete application configuration class
-        app_concrete_class, app_config_concrete_class = get_args(
-            self.__orig_bases__[0]  # type: ignore[attr-defined]
-        )
+        app_concrete_class, app_config_concrete_class = get_args(self.__orig_bases__[0])  # type: ignore[attr-defined]
 
         # Ensure that the package name is set in the concrete application class
         if app_concrete_class.PACKAGE_NAME == "":
-            raise ApplicationConfigFactoryException(
-                "The package name must be set in the concrete application class."
-            )
+            raise ApplicationConfigFactoryException("The package name must be set in the concrete application class.")
 
         try:
             config: CONFIG_T = build_config_from_file_in_package(
@@ -113,9 +107,7 @@ class GenericBaseApplicationModule(Generic[APP_T, CONFIG_T], injector.Module):
                 yaml_base_key="application",
             )
         except UnableToReadConfigFileError as exception:
-            raise ApplicationConfigFactoryException(
-                "Unable to read the application configuration file."
-            ) from exception
+            raise ApplicationConfigFactoryException("Unable to read the application configuration file.") from exception
         except ValueErrorConfigError as exception:
             raise ApplicationConfigFactoryException(
                 "Unable to create the application configuration model."

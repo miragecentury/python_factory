@@ -34,10 +34,7 @@ class TestsBookName:
             BookName.validate("A" * size)
             assert False
         except ValueError as error:
-            assert (
-                str(error)
-                == f"Expected a string with length between 1 and 100, got {size}"
-            )
+            assert str(error) == f"Expected a string with length between 1 and 100, got {size}"
 
     def test_new(self) -> None:
         """Should create a new instance of BookName."""

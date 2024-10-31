@@ -17,9 +17,7 @@ class BookName(str):
         return super().__new__(cls, cls.validate(value))
 
     @classmethod
-    def __get_pydantic_core_schema__(
-        cls, source: type[Any], handler: GetCoreSchemaHandler
-    ) -> core_schema.CoreSchema:
+    def __get_pydantic_core_schema__(cls, source: type[Any], handler: GetCoreSchemaHandler) -> core_schema.CoreSchema:
         """Get the Pydantic core schema for the book name.
 
         Args:
@@ -34,9 +32,7 @@ class BookName(str):
             core_schema.CoreSchema,
             core_schema.no_info_after_validator_function(
                 function=cls.validate,
-                schema=core_schema.str_schema(
-                    min_length=cls.MIN_LENGTH, max_length=cls.MAX_LENGTH
-                ),
+                schema=core_schema.str_schema(min_length=cls.MIN_LENGTH, max_length=cls.MAX_LENGTH),
             ),
         )
 
@@ -52,8 +48,7 @@ class BookName(str):
         """
         if not cls.MIN_LENGTH <= len(value) <= cls.MAX_LENGTH:
             raise ValueError(
-                f"Expected a string with length between {cls.MIN_LENGTH}"
-                + f" and {cls.MAX_LENGTH}, got {len(value)}"
+                f"Expected a string with length between {cls.MIN_LENGTH}" + f" and {cls.MAX_LENGTH}, got {len(value)}"
             )
 
         return value

@@ -20,9 +20,7 @@ class TestYamlFileReader:
             {yaml_test_key}: {yaml_test_value}
         """
         with patch("os.path.exists", return_value=True) as mock_exists:
-            with patch(
-                "builtins.open", new_callable=mock_open, read_data=data
-            ) as mock_open_mock:
+            with patch("builtins.open", new_callable=mock_open, read_data=data) as mock_open_mock:
                 yaml_reader = YamlFileReader(
                     file_path=Path("file_path"),
                     yaml_base_key=None,
@@ -31,9 +29,7 @@ class TestYamlFileReader:
                 read_data: dict[str, Any] = yaml_reader.read()
 
                 mock_exists.assert_called_once_with(Path("file_path"))
-                mock_open_mock.assert_called_once_with(
-                    file=Path("file_path"), encoding="UTF-8"
-                )
+                mock_open_mock.assert_called_once_with(file=Path("file_path"), encoding="UTF-8")
 
                 assert read_data == {yaml_test_key: yaml_test_value}
 
@@ -47,9 +43,7 @@ class TestYamlFileReader:
                 {yaml_test_key}: {yaml_test_value}
         """
         with patch("os.path.exists", return_value=True) as mock_exists:
-            with patch(
-                "builtins.open", new_callable=mock_open, read_data=data
-            ) as mock_open_mock:
+            with patch("builtins.open", new_callable=mock_open, read_data=data) as mock_open_mock:
                 yaml_reader = YamlFileReader(
                     file_path=Path("file_path"),
                     yaml_base_key=yaml_base_key,
@@ -58,9 +52,7 @@ class TestYamlFileReader:
                 read_data: dict[str, Any] = yaml_reader.read()
 
                 mock_exists.assert_called_once_with(Path("file_path"))
-                mock_open_mock.assert_called_once_with(
-                    file=Path("file_path"), encoding="UTF-8"
-                )
+                mock_open_mock.assert_called_once_with(file=Path("file_path"), encoding="UTF-8")
 
                 assert read_data == {yaml_test_key: yaml_test_value}
 
@@ -75,9 +67,7 @@ class TestYamlFileReader:
                     {yaml_test_key}: {yaml_test_value}
         """
         with patch("os.path.exists", return_value=True) as mock_exists:
-            with patch(
-                "builtins.open", new_callable=mock_open, read_data=data
-            ) as mock_open_mock:
+            with patch("builtins.open", new_callable=mock_open, read_data=data) as mock_open_mock:
                 yaml_reader = YamlFileReader(
                     file_path=Path("file_path"),
                     yaml_base_key=yaml_base_key,
@@ -86,9 +76,7 @@ class TestYamlFileReader:
                 read_data: dict[str, Any] = yaml_reader.read()
 
                 mock_exists.assert_called_once_with(Path("file_path"))
-                mock_open_mock.assert_called_once_with(
-                    file=Path("file_path"), encoding="UTF-8"
-                )
+                mock_open_mock.assert_called_once_with(file=Path("file_path"), encoding="UTF-8")
 
                 assert read_data == {yaml_test_key: yaml_test_value}
 
@@ -102,9 +90,7 @@ class TestYamlFileReader:
         """
         expected_result: dict[Any, Any] = {}
         with patch("os.path.exists", return_value=True) as mock_exists:
-            with patch(
-                "builtins.open", new_callable=mock_open, read_data=data
-            ) as mock_open_mock:
+            with patch("builtins.open", new_callable=mock_open, read_data=data) as mock_open_mock:
                 yaml_reader = YamlFileReader(
                     file_path=Path("file_path"),
                     yaml_base_key=yaml_base_key,
@@ -113,9 +99,7 @@ class TestYamlFileReader:
 
                 result: dict[str, Any] = yaml_reader.read()
                 mock_exists.assert_called_once_with(Path("file_path"))
-                mock_open_mock.assert_called_once_with(
-                    file=Path("file_path"), encoding="UTF-8"
-                )
+                mock_open_mock.assert_called_once_with(file=Path("file_path"), encoding="UTF-8")
                 assert result == expected_result
 
     def test_yaml_read_with_simple_env_value_to_inject(self) -> None:
@@ -126,9 +110,7 @@ class TestYamlFileReader:
             {yaml_test_key}: ${{ENV_VALUE}}
         """
         with patch("os.path.exists", return_value=True) as mock_exists:
-            with patch(
-                "builtins.open", new_callable=mock_open, read_data=data
-            ) as mock_open_mock:
+            with patch("builtins.open", new_callable=mock_open, read_data=data) as mock_open_mock:
                 with patch.dict("os.environ", {"ENV_VALUE": yaml_test_value}):
                     yaml_reader = YamlFileReader(
                         file_path=Path("file_path"),
@@ -138,9 +120,7 @@ class TestYamlFileReader:
                     read_data: dict[str, Any] = yaml_reader.read()
 
                     mock_exists.assert_called_once_with(Path("file_path"))
-                    mock_open_mock.assert_called_once_with(
-                        file=Path("file_path"), encoding="UTF-8"
-                    )
+                    mock_open_mock.assert_called_once_with(file=Path("file_path"), encoding="UTF-8")
 
                     assert read_data == {yaml_test_key: yaml_test_value}
 
@@ -154,9 +134,7 @@ class TestYamlFileReader:
                 - {yaml_test_value[1]}
         """
         with patch("os.path.exists", return_value=True) as mock_exists:
-            with patch(
-                "builtins.open", new_callable=mock_open, read_data=data
-            ) as mock_open_mock:
+            with patch("builtins.open", new_callable=mock_open, read_data=data) as mock_open_mock:
                 yaml_reader = YamlFileReader(
                     file_path=Path("file_path"),
                     yaml_base_key=None,
@@ -165,9 +143,7 @@ class TestYamlFileReader:
                 read_data: dict[str, Any] = yaml_reader.read()
 
                 mock_exists.assert_called_once_with(Path("file_path"))
-                mock_open_mock.assert_called_once_with(
-                    file=Path("file_path"), encoding="UTF-8"
-                )
+                mock_open_mock.assert_called_once_with(file=Path("file_path"), encoding="UTF-8")
 
                 assert read_data == {yaml_test_key: yaml_test_value}
 
@@ -211,9 +187,7 @@ class TestYamlFileReader:
             expected_result (dict[str, str]): The expected result.
         """
         with patch("os.path.exists", return_value=True) as mock_exists:
-            with patch(
-                "builtins.open", new_callable=mock_open, read_data=data
-            ) as mock_open_mock:
+            with patch("builtins.open", new_callable=mock_open, read_data=data) as mock_open_mock:
                 with patch.dict("os.environ", env_mock):
                     yaml_reader = YamlFileReader(
                         file_path=Path("file_path"),
@@ -223,9 +197,7 @@ class TestYamlFileReader:
                     read_data: dict[str, Any] = yaml_reader.read()
 
                     mock_exists.assert_called_once_with(Path("file_path"))
-                    mock_open_mock.assert_called_once_with(
-                        file=Path("file_path"), encoding="UTF-8"
-                    )
+                    mock_open_mock.assert_called_once_with(file=Path("file_path"), encoding="UTF-8")
 
                     assert read_data == expected_result
 
@@ -237,9 +209,7 @@ class TestYamlFileReader:
             {yaml_test_key}: {yaml_test_value}
         """
         with patch("os.path.exists", return_value=True) as mock_exists:
-            with patch(
-                "builtins.open", new_callable=mock_open, read_data=data
-            ) as mock_open_mock:
+            with patch("builtins.open", new_callable=mock_open, read_data=data) as mock_open_mock:
                 yaml_reader = YamlFileReader(
                     file_path=Path("file_path"),
                     yaml_base_key=None,
@@ -248,9 +218,7 @@ class TestYamlFileReader:
                 read_data: dict[str, Any] = yaml_reader.read()
 
                 mock_exists.assert_called_once_with(Path("file_path"))
-                mock_open_mock.assert_called_once_with(
-                    file=Path("file_path"), encoding="UTF-8"
-                )
+                mock_open_mock.assert_called_once_with(file=Path("file_path"), encoding="UTF-8")
 
                 assert read_data == {yaml_test_key: yaml_test_value}
 
@@ -262,9 +230,7 @@ class TestYamlFileReader:
             {yaml_test_key}: {yaml_test_value}
         """
         with patch("os.path.exists", return_value=True) as mock_exists:
-            with patch(
-                "builtins.open", new_callable=mock_open, read_data=data
-            ) as mock_open_mock:
+            with patch("builtins.open", new_callable=mock_open, read_data=data) as mock_open_mock:
                 yaml_reader = YamlFileReader(
                     file_path=Path("file_path"),
                     yaml_base_key=None,
@@ -273,8 +239,6 @@ class TestYamlFileReader:
                 read_data: dict[str, Any] = yaml_reader.read()
 
                 mock_exists.assert_called_once_with(Path("file_path"))
-                mock_open_mock.assert_called_once_with(
-                    file=Path("file_path"), encoding="UTF-8"
-                )
+                mock_open_mock.assert_called_once_with(file=Path("file_path"), encoding="UTF-8")
 
                 assert read_data == {yaml_test_key: yaml_test_value}

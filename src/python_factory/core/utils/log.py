@@ -19,9 +19,7 @@ class LogModeEnum(StrEnum):
 
 
 # https://github.com/hynek/structlog/issues/35#issuecomment-591321744
-def _rename_event_key(
-    _: Any, __: Any, event_dict: EventDict  # pylint: disable=invalid-name
-) -> EventDict:
+def _rename_event_key(_: Any, __: Any, event_dict: EventDict) -> EventDict:  # pylint: disable=invalid-name
     """Renames the `event` key to `message` in the event dictionary.
 
     Log entries keep the text message in the `event` field, but Datadog
@@ -43,9 +41,7 @@ def clean_uvicorn_logger() -> None:
         logging.getLogger(logger_name).propagate = True
 
 
-def _drop_color_message_key(
-    _: Any, __: Any, event_dict: EventDict  # pylint: disable=invalid-name
-) -> EventDict:
+def _drop_color_message_key(_: Any, __: Any, event_dict: EventDict) -> EventDict:  # pylint: disable=invalid-name
     """Cleans the `color_message` key from the event dictionary.
 
     Uvicorn logs the message a second time in the extra `color_message`, but we don't
@@ -55,9 +51,7 @@ def _drop_color_message_key(
     return event_dict
 
 
-def setup_log(
-    mode: LogModeEnum = LogModeEnum.CONSOLE, log_level: str = "DEBUG"
-) -> None:
+def setup_log(mode: LogModeEnum = LogModeEnum.CONSOLE, log_level: str = "DEBUG") -> None:
     """Prepares the logging configuration.
 
     Args:
@@ -143,8 +137,6 @@ def setup_log(
             sys.__excepthook__(exc_type, exc_value, exc_traceback)
             return
 
-        _logger.error(
-            "Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback)
-        )
+        _logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
 
     sys.excepthook = handle_exception

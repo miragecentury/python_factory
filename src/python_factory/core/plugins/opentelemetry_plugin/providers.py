@@ -41,9 +41,7 @@ class OpenTelemetryPluginModule(injector.Module):
 
     @injector.singleton
     @injector.provider
-    def resource_factory(
-        self, application: injector.Inject[BaseApplicationProtocol]
-    ) -> Resource:
+    def resource_factory(self, application: injector.Inject[BaseApplicationProtocol]) -> Resource:
         """Build a resource object for OpenTelemetry from the application and configs.
 
         Args:
@@ -166,9 +164,7 @@ class OpenTelemetryPluginModule(injector.Module):
 
         # Setup the Multi Span Processor
         synchronous_multi_span_processor = SynchronousMultiSpanProcessor()
-        synchronous_multi_span_processor.add_span_processor(
-            span_processor=span_processor
-        )
+        synchronous_multi_span_processor.add_span_processor(span_processor=span_processor)
 
         # Setup the TextMap Propagator for B3
         set_global_textmap(http_text_format=B3MultiFormat())
@@ -202,9 +198,7 @@ class OpenTelemetryPluginModule(injector.Module):
             OpenTelemetryConfig: The OpenTelemetry configuration object.
         """
         if base_application.PACKAGE_NAME == "":
-            raise OpenTelemetryPluginConfigError(
-                "The package name must be set in the concrete application class."
-            )
+            raise OpenTelemetryPluginConfigError("The package name must be set in the concrete application class.")
 
         # Read the application configuration file
         try:
@@ -217,16 +211,12 @@ class OpenTelemetryPluginModule(injector.Module):
                 use_environment_injection=True,
             ).read()
         except (FileNotFoundError, ImportError, UnableToReadYamlFileError) as exception:
-            raise OpenTelemetryPluginConfigError(
-                "Unable to read the application configuration file."
-            ) from exception
+            raise OpenTelemetryPluginConfigError("Unable to read the application configuration file.") from exception
 
         # Create the application configuration model
         try:
             config = OpenTelemetryConfig(**yaml_file_content)
         except ValueError as exception:
-            raise OpenTelemetryPluginConfigError(
-                "Unable to create the application configuration model."
-            ) from exception
+            raise OpenTelemetryPluginConfigError("Unable to create the application configuration model.") from exception
 
         return config

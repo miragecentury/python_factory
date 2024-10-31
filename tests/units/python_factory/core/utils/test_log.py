@@ -9,9 +9,7 @@ class TestSetupLog:
     """Various tests for the setup_log function."""
 
     @patch("structlog.configure")
-    def test_structlog_has_been_configured(
-        self, structlog_configure_mock: MagicMock
-    ) -> None:
+    def test_structlog_has_been_configured(self, structlog_configure_mock: MagicMock) -> None:
         """Test that structlog has been configured.
 
         Args:
