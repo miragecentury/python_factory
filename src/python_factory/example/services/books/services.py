@@ -63,6 +63,9 @@ class BookService:
 
         Returns:
             BookEntity: The book
+
+        Raises:
+            ValueError: If the book does not exist.
         """
         if book_id not in self.book_store:
             raise ValueError(f"Book with id {book_id} does not exist.")
