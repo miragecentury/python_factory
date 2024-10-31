@@ -71,5 +71,5 @@ pre-commit run --all-files
 ### 2- Build and Run Application on Docker
 
 ```bash
-skaffold dev
+./scripts/dev-in-container.sh
 ```

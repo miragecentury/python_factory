@@ -33,7 +33,7 @@
     # Optional.
     # When not specified, the buildpack will select the latest supported version from buildpack.toml
     # This buildpack only supports exact version numbers.
-    version = "1.8.3"
+    # version = "1.8.3"
 
     # Set to true to ensure that `poetry` is avilable on both `$PATH` and `$PYTHONPATH` for subsequent buildpacks.
     build = true

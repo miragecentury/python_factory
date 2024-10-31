@@ -14,24 +14,57 @@ build:
         builder: paketobuildpacks/builder-jammy-base
         buildpacks:
           - paketo-buildpacks/python
-
-      # docker:
-      #   cacheFrom:
-      #     - docker.io/library/python:3.12.4-slim-bullseye
-      #   dockerfile: "Dockerfile"
-      #   buildArgs:
-      #     DEV: "false"
+        dependencies:
+          paths:
+            - pyproject.toml
+            - src/*
+      platforms:
+        - "linux/amd64"
   local:
-    push: false
     useBuildkit: true
-deploy:
-  docker:
-    useCompose: false
-    images:
-      - python_factory_example
+
+test:
+  - image: python_factory_example
+    context: .
+    custom:
+      - command: "pre-commit run --all-files"
 portForward:
   - resourceType: container
     resourceName: python_factory_example
     port: 8000
     localPort: 8000
     address: localhost
+profiles:
+  - name: development-in-container
+    activation:
+      - env: ENVIRONMENT=development
+    build:
+      local:
+        push: false
+    deploy:
+      docker:
+        useCompose: false
+        images:
+          - python_factory_example
+    test:
+      - image: python_factory_example
+        context: .
+        custom:
+          - command: "pre-commit run --all-files --hook-stage commit"
+            dependencies:
+              paths:
+                - .pre-commit-config.yaml
+                - pyproject.toml
+                - src/*
+                - tests/*
+  - name: development-in-cluster
+    activation:
+      - env: ENVIRONMENT=development
+    build:
+      local:
+        push: false
+    deploy:
+      docker:
+        useCompose: false
+        images:
+          - python_factory_example
