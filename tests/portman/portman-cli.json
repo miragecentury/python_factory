@@ -1,0 +1,10 @@
+{
+  "local": "./docs/openapi/openapi.yml",
+  "output": "./build/portman-collection.json",
+  "envFile": "./tests/portman/.env-portman",
+  "portmanConfigFile": "./tests/portman/portman-config.yml",
+  "includeTests": true,
+  "bundleContractTests": true,
+  "syncPostman": false,
+  "runNewman": true
+}

@@ -175,3 +175,6 @@ data/*
 
 # Build files
 !build/.gitkeep
+
+# Portman Temporary Files
+tmp

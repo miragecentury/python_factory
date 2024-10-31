@@ -59,6 +59,12 @@ sudo apt-get install pack-cli
 Included with the usage of buildpacks
 <https://paketo.io/>
 
+#### Portman
+
+```bash
+npm install -g @apideck/portman
+```
+
 ### 1- Dev Environment
 
 ```bash
@@ -72,4 +78,8 @@ pre-commit run --all-files
 
 ```bash
 ./scripts/dev-in-container.sh
+```
+
+```bash
+./scripts/test_portman.sh
 ```

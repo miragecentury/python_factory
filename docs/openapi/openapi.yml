@@ -1,0 +1,59 @@
+openapi: 3.1.0
+info:
+  title: Python Factory Example API
+  description: Example API for Python Factory
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Development (local, in-container)
+paths:
+  /api/v1/books:
+    get:
+      summary: List all Books
+      operationId: listBooks
+      responses:
+        "200":
+          description: A list of items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  books:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        title:
+                          type: string
+                        book_type:
+                          type: string
+                  size:
+                    type: integer
+  /api/v1/books/{bookId}:
+    get:
+      summary: Get a Book
+      operationId: getBook
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          description: ID of the book to retrieve
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A single book
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  book_type:
+                    type: string

@@ -1,0 +1,28 @@
+version: 1
+tests:
+  contractTests:
+    - openApiOperation: "*::*"
+      statusSuccess:
+        enabled: true
+      responseTime:
+        enabled: true
+        maxMs: 300
+      contentType:
+        enabled: true
+      jsonBody:
+        enabled: true
+      schemaValidation:
+        enabled: true
+      headersPresent:
+        enabled: true
+assignVariables:
+  - openApiOperationId: listBooks
+    collectionVariables:
+      - responseBodyProp: books[0].id
+        name: "firstBookId"
+overwrites:
+  - openApiOperationId: getBook
+    overwriteRequestPathVariables:
+      - key: bookId
+        value: "{{firstBookId}}"
+        overwrite: true
