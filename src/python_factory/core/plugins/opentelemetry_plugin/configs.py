@@ -9,15 +9,19 @@ from pydantic_core import Url
 class OpenTelemetryMeterConfig(BaseModel):
     """Provides the configuration model for the OpenTelemetry meter as sub-model."""
 
+    # Constants for time in milliseconds and seconds
+    ONE_MINUTE_IN_MILLIS: int = 60000
+    ONE_SECOND_IN_MILLIS: int = 1000
+
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     reader_interval_millis: float = Field(
-        default=60000,
+        default=ONE_MINUTE_IN_MILLIS,
         description="The interval in miliseconds to read and export metrics.",
     )
 
     reader_timeout_millis: float = Field(
-        default=1000,
+        default=ONE_SECOND_IN_MILLIS,
         description="The timeout in miliseconds for the reader.",
     )
 
@@ -25,22 +29,30 @@ class OpenTelemetryMeterConfig(BaseModel):
 class OpenTelemetryTracerConfig(BaseModel):
     """Provides the configuration model for the OpenTelemetry tracer as sub-model."""
 
+    # Constants for time in milliseconds and seconds
+    FIVE_SECONDS_IN_MILLIS: int = 5000
+    THIRTY_SECONDS_IN_MILLIS: int = 30000
+
+    # Default values for the OpenTelemetry tracer
+    DEFAULT_OTEL_TRACER_MAX_QUEUE_SIZE: int = 2048
+    DEFAULT_OTEL_TRACER_MAX_EXPORT_BATCH_SIZE: int = 512
+
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     max_queue_size: int = Field(
-        default=2048,
+        default=DEFAULT_OTEL_TRACER_MAX_QUEUE_SIZE,
         description="The maximum queue size for the tracer.",
     )
     max_export_batch_size: int = Field(
-        default=512,
+        default=DEFAULT_OTEL_TRACER_MAX_EXPORT_BATCH_SIZE,
         description="The maximum export batch size for the tracer.",
     )
     schedule_delay_millis: int = Field(
-        default=5000,
+        default=FIVE_SECONDS_IN_MILLIS,
         description="The schedule delay in miliseconds for the tracer.",
     )
     export_timeout_millis: int = Field(
-        default=30000,
+        default=THIRTY_SECONDS_IN_MILLIS,
         description="The export timeout in miliseconds for the tracer.",
     )
 
@@ -48,7 +60,11 @@ class OpenTelemetryTracerConfig(BaseModel):
 class OpenTelemetryConfig(BaseModel):
     """Provides the configuration model for the OpenTelemetry plugin."""
 
-    COLLECTOR_ENDPOINT_DEFAULT: str = "http://localhost:4317"
+    # Constants for time in milliseconds and seconds
+    TEN_SECONDS_IN_SECONDS: int = 10
+
+    # Default value for the collector endpoint
+    DEFAULT_COLLECTOR_ENDPOINT: str = "http://localhost:4318"
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -57,17 +73,17 @@ class OpenTelemetryConfig(BaseModel):
         description="Whether to activate the OpenTelemetry collector export.",
     )
     endpoint: Annotated[Url, UrlConstraints(allowed_schemes=["http", "https"])] = Field(
-        default=Url(url=COLLECTOR_ENDPOINT_DEFAULT),
+        default=Url(url=DEFAULT_COLLECTOR_ENDPOINT),
         description="The collector endpoint.",
     )
 
     timeout: int = Field(
-        default=10,
+        default=TEN_SECONDS_IN_SECONDS,
         description="The timeout in seconds for the collector.",
     )
 
     closing_timeout: int = Field(
-        default=10,
+        default=TEN_SECONDS_IN_SECONDS,
         description="The closing timeout in seconds for the collector.",
     )
 
