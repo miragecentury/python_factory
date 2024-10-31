@@ -4,6 +4,7 @@ from abc import ABC
 from typing import Any
 
 from fastapi import APIRouter, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -56,6 +57,16 @@ class FastAPIAbstract(ABC):
             root_path=config.root_path,
             debug=config.debug,
         )
+
+        # TODO: Add CORS middleware Configuration
+        self._fastapi_app.add_middleware(
+            middleware_class=CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+
         if api_router is not None:
             self._fastapi_app.include_router(router=api_router)
 
