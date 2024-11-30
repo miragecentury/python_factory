@@ -44,7 +44,7 @@
         "source.organizeImports": "explicit"
     },
     "editor.rulers": [
-        88
+        120
     ],
     "markiscodecoverage.searchCriteria": "coverage.lcov",
     "files.eol": "\n",

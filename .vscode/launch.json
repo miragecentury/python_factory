@@ -15,6 +15,7 @@
             "name": "Python Debugger: Tests",
             "type": "debugpy",
             "request": "launch",
+            "module": "pytest",
             "args": [
                 "tests/units",
                 "--no-cov"
