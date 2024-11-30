@@ -1,6 +1,9 @@
 """Test the services module."""
 
+from unittest.mock import MagicMock
 from uuid import UUID
+
+from opentelemetry.metrics import Meter
 
 from python_factory.example.services.books.entities import BookEntity
 from python_factory.example.services.books.enums import BookType
@@ -26,9 +29,13 @@ class TestBookService:
         for book in books:
             assert book == book_service.get_book(book_id=book.id)
 
-    def test_add_book(self) -> None:
+    def test_add_book(
+        self,
+    ) -> None:
         """Test add_book."""
-        book_service = BookService()
+        meter_mock: MagicMock = MagicMock(spec=Meter)
+
+        book_service = BookService(meter=meter_mock)
         books: list[BookEntity] = book_service.get_all_books()
 
         book = BookEntity(title=BookName("Test Book"), book_type=BookType.FANTASY)
@@ -37,6 +44,11 @@ class TestBookService:
         assert book == book_service.get_book(book_id=book.id)
         assert book in book_service.get_all_books()
         assert len(book_service.get_all_books()) == len(books) + 1
+
+        counter_add_call = next((call for call in meter_mock.create_counter.mock_calls if call[0] == "().add"), None)
+
+        assert counter_add_call is not None
+        assert counter_add_call[2]["amount"] == 1
 
     def test_add_book_already_exists(self) -> None:
         """Test add_book with a book that already exists."""
