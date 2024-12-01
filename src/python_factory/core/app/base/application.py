@@ -1,7 +1,11 @@
 """Provides the abstract class for the application."""
 
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 from typing import cast
 
+import starlette.types
+from fastapi import FastAPI
 from injector import Injector
 
 from python_factory.core.api import api
@@ -32,15 +36,28 @@ class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
             raise ValueError("The package name must be set in the concrete application class.")
 
         self._config: AppConfigAbstract = config
-        FastAPIAbstract.__init__(self=cast(FastAPIAbstract, self), config=self._config, api_router=api)
+        FastAPIAbstract.__init__(
+            self=cast(FastAPIAbstract, self),
+            config=self._config,
+            api_router=api,
+            lifespan=cast(starlette.types.StatelessLifespan[starlette.types.ASGIApp], self.fastapi_lifespan),
+        )
         ApplicationPluginManagerAbstract.__init__(self=cast(ApplicationPluginManagerAbstract, self))
 
-        self._fastapi_app.add_event_handler(  # pyright: ignore[reportUnknownMemberType]
-            event_type="startup", func=self.plugins_on_startup
-        )
-        self._fastapi_app.add_event_handler(  # pyright: ignore[reportUnknownMemberType]
-            event_type="shutdown", func=self.plugins_on_shutdown
-        )
+    @asynccontextmanager
+    async def fastapi_lifespan(self, fastapi_application: FastAPI) -> AsyncGenerator[None, None]:
+        """Provide the lifespan context manager for FastAPI.
+
+        Args:
+            fastapi_application (FastAPI): The FastAPI application.
+
+        Returns:
+            AsyncGenerator[None]: The lifespan context manager.
+        """
+        del fastapi_application
+        await self.plugins_on_startup()
+        yield
+        await self.plugins_on_shutdown()
 
     def attach_injector(self, injector: Injector) -> None:
         """Attach the injector to the application.

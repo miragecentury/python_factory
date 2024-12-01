@@ -3,6 +3,7 @@
 from abc import ABC
 from typing import Any
 
+import starlette.types
 from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field
@@ -36,13 +37,19 @@ class FastAPIConfigAbstract(ABC, BaseModel):
 class FastAPIAbstract(ABC):
     """Application integration with FastAPI."""
 
-    def __init__(self, config: FastAPIConfigAbstract, api_router: APIRouter | None = None) -> None:
+    def __init__(
+        self,
+        config: FastAPIConfigAbstract,
+        api_router: APIRouter | None = None,
+        lifespan: starlette.types.StatelessLifespan[starlette.types.ASGIApp] | None = None,
+    ) -> None:
         """Instanciate the FastAPI application.
 
         Args:
             config (FastAPIConfigAbstract): The FastAPI configuration.
             api_router (APIRouter, optional): The API router to include.
                 Defaults to None.
+            lifespan (AsyncGenerator[None, None], optional): The lifespan
 
         Returns:
             None
@@ -54,6 +61,7 @@ class FastAPIAbstract(ABC):
             version=config.version,
             root_path=config.root_path,
             debug=config.debug,
+            lifespan=lifespan,
         )
 
         # TODO: Add CORS middleware Configuration
