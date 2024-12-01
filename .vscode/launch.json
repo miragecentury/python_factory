@@ -5,28 +5,33 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Module",
+            "name": "Python Debugger: Example",
             "type": "debugpy",
             "request": "launch",
             "module": "python_factory.example",
             "justMyCode": false
         },
+        // Provide a configuration for debugging tests
         {
             "name": "Python Debugger: Tests",
             "type": "debugpy",
             "request": "launch",
-            "module": "pytest",
+            "program": "${file}",
             "args": [
-                "tests/units",
-                "--no-cov"
+                "--dist",
+                "no",
             ],
             "justMyCode": false,
             "purpose": [
                 "debug-test",
                 "debug-in-terminal"
             ],
-            "env": {
-                "PYTEST_ADDOPTS": "--no-cov"
+            "autoReload": {
+                "include": [
+                    "${workspaceFolder}/src/**/*.py",
+                    "${workspaceFolder}/tests/**/*.py"
+                ],
+                "enable": true
             }
         }
     ]
