@@ -7,6 +7,10 @@ services:
       - ./docker/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
       - "4317:4317"
+  mongo:
+    image: docker.io/mongo:latest
+    ports:
+      - "27017:27017"
     networks:
       - devcontainer
       - default
