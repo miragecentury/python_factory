@@ -4,7 +4,7 @@ import injector
 
 from python_factory.core.app import BaseApplication, GenericBaseApplicationModule
 
-from ..services.books import BookService
+from ..services.books.services import BookService
 from .config import AppConfig
 
 
@@ -37,6 +37,9 @@ class AppModule(GenericBaseApplicationModule[App, AppConfig]):
             binder (injector.Binder): The injection binder.
         """
         super().configure(binder=binder)
+        from ..models.books import BookRepository
+
+        binder.bind(interface=BookRepository, to=BookRepository)
 
         # Bind Services
 

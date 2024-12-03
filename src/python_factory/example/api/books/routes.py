@@ -7,7 +7,8 @@ import injector
 from fastapi import APIRouter
 
 from python_factory.core.utils.injector_fastapi import inject_depends
-from python_factory.example.services.books import BookEntity, BookService
+from python_factory.example.entities.books import BookEntity
+from python_factory.example.services.books import BookService
 
 from .responses import BookListReponse, BookResponseModel
 

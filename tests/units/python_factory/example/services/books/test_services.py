@@ -5,10 +5,9 @@ from uuid import UUID
 
 from opentelemetry.metrics import Meter
 
-from python_factory.example.services.books.entities import BookEntity
-from python_factory.example.services.books.enums import BookType
+from python_factory.example.entities.books import BookEntity, BookName, BookType
+from python_factory.example.models.books.repository import BookRepository
 from python_factory.example.services.books.services import BookService
-from python_factory.example.services.books.types import BookName
 
 
 class TestBookService:
@@ -16,14 +15,16 @@ class TestBookService:
 
     def test_get_all_books(self) -> None:
         """Test get_all_books."""
-        book_service = BookService()
+        book_service = BookService(
+            book_repository=MagicMock(BookRepository),
+        )
         books: list[BookEntity] = book_service.get_all_books()
 
         assert len(books) >= 0
 
     def test_get_book(self) -> None:
         """Test get_book."""
-        book_service = BookService()
+        book_service = BookService(book_repository=MagicMock(BookRepository))
         books: list[BookEntity] = book_service.get_all_books()
 
         for book in books:
@@ -35,7 +36,7 @@ class TestBookService:
         """Test add_book."""
         meter_mock: MagicMock = MagicMock(spec=Meter)
 
-        book_service = BookService(meter=meter_mock)
+        book_service = BookService(book_repository=MagicMock(BookRepository), meter=meter_mock)
         books: list[BookEntity] = book_service.get_all_books()
 
         book = BookEntity(title=BookName("Test Book"), book_type=BookType.FANTASY)
@@ -52,7 +53,7 @@ class TestBookService:
 
     def test_add_book_already_exists(self) -> None:
         """Test add_book with a book that already exists."""
-        book_service = BookService()
+        book_service = BookService(book_repository=MagicMock(BookRepository))
         books: list[BookEntity] = book_service.get_all_books()
 
         book = books[0]
@@ -68,7 +69,7 @@ class TestBookService:
 
     def test_remove_book(self) -> None:
         """Test remove_book."""
-        book_service = BookService()
+        book_service = BookService(book_repository=MagicMock(BookRepository))
         books: list[BookEntity] = book_service.get_all_books()
 
         book = books[0]
@@ -79,7 +80,7 @@ class TestBookService:
 
     def test_remove_book_does_not_exist(self) -> None:
         """Test remove_book with a book that does not exist."""
-        book_service = BookService()
+        book_service = BookService(book_repository=MagicMock(BookRepository))
         books: list[BookEntity] = book_service.get_all_books()
 
         book_id = "00000000-0000-0000-0000-000000000000"
@@ -94,7 +95,7 @@ class TestBookService:
 
     def test_update_book(self) -> None:
         """Test update_book."""
-        book_service = BookService()
+        book_service = BookService(book_repository=MagicMock(BookRepository))
         books: list[BookEntity] = book_service.get_all_books()
 
         book = books[0]
@@ -109,7 +110,7 @@ class TestBookService:
 
     def test_update_book_does_not_exist(self) -> None:
         """Test update_book with a book that does not exist."""
-        book_service = BookService()
+        book_service = BookService(book_repository=MagicMock(BookRepository))
         books: list[BookEntity] = book_service.get_all_books()
 
         book = BookEntity(

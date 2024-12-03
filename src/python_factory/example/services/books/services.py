@@ -3,13 +3,12 @@
 from typing import ClassVar
 from uuid import UUID
 
+import injector
 from opentelemetry import metrics
 
 from python_factory.core.plugins.opentelemetry_plugin.helpers import trace_span
-from python_factory.example.services.books.types import BookName
-
-from .entities import BookEntity
-from .enums import BookType
+from python_factory.example.entities.books import BookEntity, BookName, BookType
+from python_factory.example.models.books.repository import BookRepository
 
 
 class BookService:
@@ -23,8 +22,25 @@ class BookService:
     METER_COUNTER_BOOK_UPDATE_NAME: str = "book_update"
     # ====================
 
-    def __init__(self, meter: metrics.Meter | None = None) -> None:
-        """Initialize the service."""
+    @injector.inject
+    @injector.noninjectable("meter")
+    def __init__(
+        self,
+        book_repository: BookRepository,
+        meter: metrics.Meter | None = None,
+    ) -> None:
+        """Initialize the service.
+
+        Args:
+            book_repository (injector.Inject[BookRepository]): The book repository.
+            meter (metrics.Meter, optional): The meter. Defaults to None use for testing purpose.
+
+        Raises:
+            ValueError: If the book already exists.
+
+        """
+        self.book_repository: BookRepository = book_repository
+
         if meter is None:
             meter = metrics.get_meter(name=__name__)
 

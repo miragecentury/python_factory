@@ -4,8 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
-from python_factory.example.services.books.enums import BookType
-from python_factory.example.services.books.types import BookName
+from python_factory.example.entities.books import BookName, BookType
 
 
 class BookResponseModel(BaseModel):

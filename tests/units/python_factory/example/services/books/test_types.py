@@ -5,7 +5,7 @@ from typing import cast
 import pytest
 from pydantic import BaseModel
 
-from python_factory.example.services.books.types import BookName
+from python_factory.example.entities.books.types import BookName
 
 
 class TestsBookName:
