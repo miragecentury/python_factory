@@ -13,8 +13,8 @@ class BookDocument(Document):
     """BookModel."""
 
     id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)  # type: ignore
-    name: Annotated[BookName, Indexed(unique=True)]
-    type: Annotated[BookType, Indexed()]
+    title: Annotated[BookName, Indexed(unique=True)]
+    book_type: Annotated[BookType, Indexed()]
 
     class Meta:
         """Meta class for BookModel."""

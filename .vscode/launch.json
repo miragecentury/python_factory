@@ -17,22 +17,18 @@
             "type": "debugpy",
             "request": "launch",
             "program": "${file}",
-            "args": [
-                "--dist",
-                "no",
-            ],
+            "args": [],
             "justMyCode": false,
             "purpose": [
                 "debug-test",
                 "debug-in-terminal"
             ],
-            "autoReload": {
-                "include": [
-                    "${workspaceFolder}/src/**/*.py",
-                    "${workspaceFolder}/tests/**/*.py"
-                ],
-                "enable": true
-            }
+            "env": {
+                "PYTEST_ADDOPTS": "--no-cov"
+            },
+            "pythonArgs": [
+                "-Xfrozen_modules=off"
+            ]
         }
     ]
 }

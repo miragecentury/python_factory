@@ -57,13 +57,13 @@ async def on_startup(
         None
     """
     odm_config: ODMConfig = application.get_injector().get(ODMConfig)
-    database: AsyncIOMotorClient[Any] = AsyncIOMotorClient(
+    odm_client: AsyncIOMotorClient[Any] = AsyncIOMotorClient(
         host=odm_config.mongo_uri,
     )
 
-    application.get_injector().binder.bind(AsyncIOMotorClient, to=database)
+    application.get_injector().binder.bind(AsyncIOMotorClient, to=odm_client)
 
-    await init_beanie(database=database, document_models=[])  # type: ignore
+    await init_beanie(database=odm_client, document_models=[])  # type: ignore
 
     _logger.debug("ODM plugin started.")
 

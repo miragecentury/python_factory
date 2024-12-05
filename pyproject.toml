@@ -23,6 +23,7 @@ opentelemetry-instrumentation-fastapi = "^0.49b1"
 opentelemetry-propagator-b3 = "^1.26.0"
 beanie = "^1.27.0"
 opentelemetry-instrumentation-pymongo = "^0.49b2"
+pymongo = "~4.9.2"
 
 [tool.poetry.group.test]
 optional = true
@@ -39,6 +40,8 @@ pytest = "^8.2.0"
 pytest-xdist = "^3.6.1"
 pytest-cov = "^6.0.0"
 ruff = "^0.7.2"
+pytest-asyncio = "^0.24.0"
+pytest-mongo = "^3.1.0"
 
 [tool.poetry.extras]
 
@@ -50,12 +53,15 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = "tests/units -n auto --color=yes --import-mode=importlib"
+addopts = "tests/units tests/integrations -n auto --color=yes --import-mode=importlib --no-cov"
 filterwarnings = [
     "ignore:.*Type google._upb._message.MessageMapContainer:DeprecationWarning",
     "ignore:.*Type google._upb._message.ScalarMapContainer:DeprecationWarning",
     "ignore:.*pkg_resources is deprecated as an API.:DeprecationWarning",
 ]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+mongo_params = ""
 
 [tool.black]
 line-length = 120
