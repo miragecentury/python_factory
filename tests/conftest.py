@@ -1,5 +1,6 @@
 """Cong Test."""
 
+import asyncio
 from collections.abc import AsyncGenerator
 from typing import Any
 from uuid import uuid4
@@ -32,3 +33,8 @@ async def async_motor_database(mongodb: MongoClient[Any]) -> AsyncGenerator[Asyn
     finally:
         await client.drop_database(name_or_database=database_name)
         client.close()
+        # Pymongo does not cleanely close the connection
+        # the monitoring stream is still running
+        # and need time to close nicely
+        # so we wait a bit to prevent the exception and log message
+        await asyncio.sleep(0.3)
