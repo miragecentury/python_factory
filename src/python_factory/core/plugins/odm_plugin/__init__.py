@@ -3,13 +3,12 @@
 from typing import Any
 
 from beanie import init_beanie  # type: ignore
-from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+from motor.motor_asyncio import AsyncIOMotorClient
 from structlog.stdlib import BoundLogger, get_logger
 
 from python_factory.core.protocols import BaseApplicationProtocol
 
-from .configs import ODMConfig
-from .providers import ODMPluginModule
+from .builder import ODMBuilder
 
 _logger: BoundLogger = get_logger()
 
@@ -51,18 +50,25 @@ async def on_startup(
     Returns:
         None
     """
-    odm_config: ODMConfig = ODMPluginModule().odm_config(application)
-    odm_client: AsyncIOMotorClient[Any] = AsyncIOMotorClient(
-        host=odm_config.mongo_uri,
+    odm_factory: ODMBuilder = ODMBuilder(application=application)
+    odm_factory.build_odm_config()
+    odm_factory.build_client()
+    odm_factory.build_database()
+    # TODO: Find a way to add type to the state
+    application.get_asgi_app().state.odm_client = odm_factory.odm_client
+    application.get_asgi_app().state.odm_database = odm_factory.odm_database
+
+    # TODO: Find a better way to initialize beanie with the document models of the concrete application
+    # through an hook in the application ?
+    await init_beanie(
+        database=odm_factory.odm_database, document_models=application.odm_document_models  # type: ignore
     )
-    odm_database: AsyncIOMotorDatabase[Any] = odm_client.get_database(name=odm_config.mongo_database)
 
-    application.get_asgi_app().state.odm_client = odm_client
-    application.get_asgi_app().state.odm_database = odm_database
-
-    await init_beanie(database=odm_database, document_models=[])  # type: ignore
-
-    _logger.debug("ODM plugin started.")
+    _logger.debug(
+        f"ODM plugin started. Database: {odm_factory.odm_database.name} - "  # type: ignore
+        f"Client: {odm_factory.odm_client.address} - "  # type: ignore
+        f"Document models: {application.odm_document_models}"
+    )  # type: ignore
 
 
 async def on_shutdown(application: BaseApplicationProtocol) -> None:

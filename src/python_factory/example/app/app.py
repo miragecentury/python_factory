@@ -1,5 +1,9 @@
 """Provides the concrete application class."""
 
+from typing import ClassVar
+
+from beanie import Document
+
 from python_factory.core.app import BaseApplication
 from python_factory.core.app.base.exceptions import ApplicationConfigFactoryException
 from python_factory.core.utils.configs import (
@@ -7,6 +11,7 @@ from python_factory.core.utils.configs import (
     ValueErrorConfigError,
     build_config_from_file_in_package,
 )
+from python_factory.example.models.books.document import BookDocument
 
 from .config import AppConfig
 
@@ -15,6 +20,8 @@ class App(BaseApplication):
     """Concrete application class."""
 
     PACKAGE_NAME: str = "python_factory.example"
+
+    odm_document_models: ClassVar[list[type[Document]]] = [BookDocument]
 
     def __init__(self, config: AppConfig) -> None:
         """Instanciate the application with the configuration and the API router.
@@ -57,4 +64,5 @@ def factory_for_app(app_config: AppConfig | None = None) -> App:
         app_config = config_factory()
     application: App = App(config=app_config)
 
+    return application
     return application

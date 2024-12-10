@@ -1,7 +1,8 @@
 """Protocols for the base application."""
 
-from typing import TYPE_CHECKING, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, ClassVar, Protocol, runtime_checkable
 
+from beanie import Document
 from fastapi import FastAPI
 
 if TYPE_CHECKING:
@@ -12,6 +13,8 @@ class BaseApplicationProtocol(Protocol):
     """Protocol for the base application."""
 
     PACKAGE_NAME: str
+
+    odm_document_models: ClassVar[list[type[Document]]]
 
     def get_config(self) -> "AppConfigAbstract":
         """Get the application configuration."""

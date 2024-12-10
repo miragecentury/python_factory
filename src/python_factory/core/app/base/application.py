@@ -2,9 +2,10 @@
 
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import cast
+from typing import ClassVar, cast
 
 import starlette.types
+from beanie import Document
 from fastapi import FastAPI
 
 from python_factory.core.api import api
@@ -18,6 +19,8 @@ class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
     """Application abstract class."""
 
     PACKAGE_NAME: str = ""
+
+    odm_document_models: ClassVar[list[type[Document]]] = []
 
     def __init__(self, config: AppConfigAbstract) -> None:
         """Instanciate the application.
