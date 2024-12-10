@@ -1,11 +1,26 @@
 [tool.poetry]
 name = "python_factory"
+homepage = "https://github.com/miragecentury/python_factory"
+repository = "https://github.com/miragecentury/python_factory"
+keywords = ["python", "fastapi", "beanie", "httpx", "opentelemetry", "microservices"]
 version = "0.1.0"
-description = ""
+description = "Consolidate libraries and utilities to create microservices in Python with FastAPI, Beanie, Httpx, AioPika and OpenTelemetry."
 authors = ["miragecentury <victorien.vanroye@gmail.com>"]
+maintainers = ["miragecentury <victorien.vanroye@gmail.com>"]
+license = "MIT"
 readme = "README.md"
 packages = [
     { include = "python_factory", from = "src" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
 ]
 
 [tool.poetry.dependencies]
@@ -22,7 +37,7 @@ opentelemetry-instrumentation-fastapi = "^0.49b1"
 opentelemetry-propagator-b3 = "^1.26.0"
 beanie = "^1.27.0"
 opentelemetry-instrumentation-pymongo = "^0.49b2"
-pymongo = "~4.9.2"
+pymongo = "~4.9.2" # version fixed to fix integration between beanie and pytest-mongo
 
 [tool.poetry.group.test]
 optional = true
