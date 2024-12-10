@@ -1,26 +1,26 @@
 """OpenTelemetry Plugin Module."""
 
 import asyncio
+from typing import cast
 
 from opentelemetry.instrumentation.fastapi import (  # pyright: ignore[reportMissingTypeStubs]
     FastAPIInstrumentor,
 )
 from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from structlog.stdlib import BoundLogger, get_logger
 
 from python_factory.core.protocols import BaseApplicationProtocol
 
+from .builder import OpenTelemetryPluginBuilder
 from .configs import OpenTelemetryConfig
 from .exceptions import OpenTelemetryPluginBaseException, OpenTelemetryPluginConfigError
-from .providers import OpenTelemetryPluginModule
 
 __all__: list[str] = [
     "OpenTelemetryConfig",
     "OpenTelemetryPluginBaseException",
     "OpenTelemetryPluginConfigError",
-    "OpenTelemetryPluginModule",
+    "OpenTelemetryPluginBuilder",
 ]
 
 _logger: BoundLogger = get_logger()
@@ -47,26 +47,27 @@ def on_load(
     Args:
         application (BaseApplicationProtocol): The application.
     """
-    otel_config: OpenTelemetryConfig = OpenTelemetryPluginModule().provider_open_telemetry_config(application)
-    resource: Resource = OpenTelemetryPluginModule().resource_factory(application)
-    tracer_provider: TracerProvider = OpenTelemetryPluginModule().tracer_provider_factory(
-        resource=resource, opentelemetry_config=otel_config
-    )
-    meter_provider: MeterProvider = OpenTelemetryPluginModule().meter_provider_factory(
-        resource=resource, opentelemetry_config=otel_config
-    )
-
-    application.get_asgi_app().state.tracer_provider = tracer_provider
-    application.get_asgi_app().state.meter_provider = meter_provider
+    # Build the OpenTelemetry Resources, TracerProvider and MeterProvider
+    otel_builder: OpenTelemetryPluginBuilder = OpenTelemetryPluginBuilder(application=application)
+    otel_builder.build_config()
+    otel_builder.build_resource()
+    otel_builder.build_tracer_provider()
+    otel_builder.build_meter_provider()
+    # Configuration is never None at this point (checked in the builder and raises an exception)
+    otel_config: OpenTelemetryConfig = cast(OpenTelemetryConfig, otel_builder.config)
+    # Save as state in the FastAPI application
+    application.get_asgi_app().state.tracer_provider = otel_builder.tracer_provider
+    application.get_asgi_app().state.meter_provider = otel_builder.meter_provider
     application.get_asgi_app().state.otel_config = otel_config
+    # Instrument the FastAPI application
     FastAPIInstrumentor.instrument_app(  # pyright: ignore[reportUnknownMemberType]
         app=application.get_asgi_app(),
-        tracer_provider=tracer_provider,
-        meter_provider=meter_provider,
+        tracer_provider=otel_builder.tracer_provider,
+        meter_provider=otel_builder.meter_provider,
         excluded_urls=otel_config.excluded_urls,
     )
 
-    _logger.debug("OpenTelemetry plugin loaded.")
+    _logger.debug(f"OpenTelemetry plugin loaded. {otel_config.activate=}")
 
 
 async def on_startup(
