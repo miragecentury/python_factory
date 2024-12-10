@@ -3,7 +3,6 @@
 from typing import ClassVar
 from uuid import UUID
 
-import injector
 from opentelemetry import metrics
 
 from python_factory.core.plugins.opentelemetry_plugin.helpers import trace_span
@@ -22,8 +21,6 @@ class BookService:
     METER_COUNTER_BOOK_UPDATE_NAME: str = "book_update"
     # ====================
 
-    @injector.inject
-    @injector.noninjectable("meter")
     def __init__(
         self,
         book_repository: BookRepository,

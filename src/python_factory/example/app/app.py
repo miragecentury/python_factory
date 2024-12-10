@@ -1,10 +1,13 @@
 """Provides the concrete application class."""
 
-import injector
+from python_factory.core.app import BaseApplication
+from python_factory.core.app.base.exceptions import ApplicationConfigFactoryException
+from python_factory.core.utils.configs import (
+    UnableToReadConfigFileError,
+    ValueErrorConfigError,
+    build_config_from_file_in_package,
+)
 
-from python_factory.core.app import BaseApplication, GenericBaseApplicationModule
-
-from ..services.books.services import BookService
 from .config import AppConfig
 
 
@@ -13,7 +16,7 @@ class App(BaseApplication):
 
     PACKAGE_NAME: str = "python_factory.example"
 
-    def __init__(self, config: injector.Inject[AppConfig]) -> None:
+    def __init__(self, config: AppConfig) -> None:
         """Instanciate the application with the configuration and the API router.
 
         Args:
@@ -27,36 +30,31 @@ class App(BaseApplication):
         self.get_asgi_app().include_router(router=api_router)
 
 
-class AppModule(GenericBaseApplicationModule[App, AppConfig]):
-    """Configure the injection bindings for the application."""
+def config_factory() -> AppConfig:
+    """Provides the configuration factory."""
+    try:
+        config: AppConfig = build_config_from_file_in_package(
+            package_name=App.PACKAGE_NAME,
+            config_class=AppConfig,
+            filename="application.yaml",
+            yaml_base_key="application",
+        )
+    except UnableToReadConfigFileError as exception:
+        raise ApplicationConfigFactoryException("Unable to read the application configuration file.") from exception
+    except ValueErrorConfigError as exception:
+        raise ApplicationConfigFactoryException("Unable to create the application configuration model.") from exception
 
-    def configure(self, binder: injector.Binder) -> None:
-        """Configure the injection bindings.
-
-        Args:
-            binder (injector.Binder): The injection binder.
-        """
-        super().configure(binder=binder)
-        from ..models.books import BookRepository
-
-        binder.bind(interface=BookRepository, to=BookRepository)
-
-        # Bind Services
-
-        # Book Service as Singleton due to the ClassVar book_store (shared state)
-        # It's temporary, we will replace it with a database later
-        binder.bind(interface=BookService, to=BookService, scope=injector.SingletonScope)
+    return config
 
 
-def factory_for_app(injector_instance: injector.Injector | None = None) -> App:
+def factory_for_app(app_config: AppConfig | None = None) -> App:
     """Provides the application factory.
 
     TODO: Move this to core and transform it into a generic factory.
     Args will be the application class and the module class.
     """
-    if injector_instance is None:
-        injector_instance = injector.Injector()
-        injector_instance.binder.install(AppModule)
-    application: App = injector_instance.get(interface=App)
-    application.attach_injector(injector=injector_instance)
+    if app_config is None:
+        app_config = config_factory()
+    application: App = App(config=app_config)
+
     return application

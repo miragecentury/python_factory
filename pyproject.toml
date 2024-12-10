@@ -12,7 +12,6 @@ packages = [
 python = "~3.12"
 structlog = "^24.1.0"
 typer = "^0.13.0"
-injector = "^0.22.0"
 pydantic = "^2.8.2"
 fastapi = "^0.115.4"
 uvicorn = "^0.32.0"

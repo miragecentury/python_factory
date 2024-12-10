@@ -2,11 +2,11 @@
 
 import asyncio
 
-from injector import Module, inject
 from opentelemetry.instrumentation.fastapi import (  # pyright: ignore[reportMissingTypeStubs]
     FastAPIInstrumentor,
 )
 from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from structlog.stdlib import BoundLogger, get_logger
 
@@ -25,8 +25,6 @@ __all__: list[str] = [
 
 _logger: BoundLogger = get_logger()
 
-INJECTOR_MODULE: type[Module] = OpenTelemetryPluginModule
-
 
 def pre_conditions_check(application: BaseApplicationProtocol) -> bool:
     """Check the pre-conditions for the OpenTelemetry plugin.
@@ -41,7 +39,6 @@ def pre_conditions_check(application: BaseApplicationProtocol) -> bool:
     return True
 
 
-@inject
 def on_load(
     application: BaseApplicationProtocol,
 ) -> None:
@@ -50,9 +47,18 @@ def on_load(
     Args:
         application (BaseApplicationProtocol): The application.
     """
-    tracer_provider: TracerProvider = application.get_injector().get(TracerProvider)
-    meter_provider: MeterProvider = application.get_injector().get(MeterProvider)
-    otel_config: OpenTelemetryConfig = application.get_injector().get(OpenTelemetryConfig)
+    otel_config: OpenTelemetryConfig = OpenTelemetryPluginModule().provider_open_telemetry_config(application)
+    resource: Resource = OpenTelemetryPluginModule().resource_factory(application)
+    tracer_provider: TracerProvider = OpenTelemetryPluginModule().tracer_provider_factory(
+        resource=resource, opentelemetry_config=otel_config
+    )
+    meter_provider: MeterProvider = OpenTelemetryPluginModule().meter_provider_factory(
+        resource=resource, opentelemetry_config=otel_config
+    )
+
+    application.get_asgi_app().state.tracer_provider = tracer_provider
+    application.get_asgi_app().state.meter_provider = meter_provider
+    application.get_asgi_app().state.otel_config = otel_config
     FastAPIInstrumentor.instrument_app(  # pyright: ignore[reportUnknownMemberType]
         app=application.get_asgi_app(),
         tracer_provider=tracer_provider,
@@ -63,7 +69,6 @@ def on_load(
     _logger.debug("OpenTelemetry plugin loaded.")
 
 
-@inject
 async def on_startup(
     application: BaseApplicationProtocol,
 ) -> None:
@@ -88,9 +93,9 @@ async def on_shutdown(application: BaseApplicationProtocol) -> None:
     Returns:
         None
     """
-    tracer_provider: TracerProvider = application.get_injector().get(TracerProvider)
-    meter_provider: MeterProvider = application.get_injector().get(MeterProvider)
-    otel_config: OpenTelemetryConfig = application.get_injector().get(OpenTelemetryConfig)
+    tracer_provider: TracerProvider = application.get_asgi_app().state.tracer_provider
+    meter_provider: MeterProvider = application.get_asgi_app().state.meter_provider
+    otel_config: OpenTelemetryConfig = application.get_asgi_app().state.otel_config
 
     seconds_to_ms_multiplier: int = 1000
 

@@ -3,8 +3,7 @@
 from typing import Any
 
 from beanie import init_beanie  # type: ignore
-from injector import Module, inject
-from motor.motor_asyncio import AsyncIOMotorClient
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from structlog.stdlib import BoundLogger, get_logger
 
 from python_factory.core.protocols import BaseApplicationProtocol
@@ -13,8 +12,6 @@ from .configs import ODMConfig
 from .providers import ODMPluginModule
 
 _logger: BoundLogger = get_logger()
-
-INJECTOR_MODULE: type[Module] = ODMPluginModule
 
 
 def pre_conditions_check(application: BaseApplicationProtocol) -> bool:
@@ -30,7 +27,6 @@ def pre_conditions_check(application: BaseApplicationProtocol) -> bool:
     return True
 
 
-@inject
 def on_load(
     application: BaseApplicationProtocol,
 ) -> None:
@@ -43,7 +39,6 @@ def on_load(
     _logger.debug("ODM plugin loaded.")
 
 
-@inject
 async def on_startup(
     application: BaseApplicationProtocol,
 ) -> None:
@@ -56,14 +51,16 @@ async def on_startup(
     Returns:
         None
     """
-    odm_config: ODMConfig = application.get_injector().get(ODMConfig)
+    odm_config: ODMConfig = ODMPluginModule().odm_config(application)
     odm_client: AsyncIOMotorClient[Any] = AsyncIOMotorClient(
         host=odm_config.mongo_uri,
     )
+    odm_database: AsyncIOMotorDatabase[Any] = odm_client.get_database(name=odm_config.mongo_database)
 
-    application.get_injector().binder.bind(AsyncIOMotorClient, to=odm_client)
+    application.get_asgi_app().state.odm_client = odm_client
+    application.get_asgi_app().state.odm_database = odm_database
 
-    await init_beanie(database=odm_client, document_models=[])  # type: ignore
+    await init_beanie(database=odm_database, document_models=[])  # type: ignore
 
     _logger.debug("ODM plugin started.")
 
@@ -77,6 +74,6 @@ async def on_shutdown(application: BaseApplicationProtocol) -> None:
     Returns:
         None
     """
-    database: AsyncIOMotorClient[Any] = application.get_injector().get(AsyncIOMotorClient)
-    database.close()
+    client: AsyncIOMotorClient[Any] = application.get_asgi_app().state.odm_client
+    client.close()
     _logger.debug("ODM plugin shutdown.")

@@ -7,11 +7,9 @@ from .exceptions import (
     ApplicationFactoryException,
     BaseApplicationException,
 )
-from .module import GenericBaseApplicationModule
 
 __all__: list[str] = [
     "BaseApplication",
-    "GenericBaseApplicationModule",
     "AppConfigAbstract",
     "ApplicationConfigFactoryException",
     "ApplicationFactoryException",

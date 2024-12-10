@@ -9,3 +9,5 @@ class ODMConfig(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     mongo_uri: str = "mongodb://localhost:27017/"
+
+    mongo_database: str = "test"

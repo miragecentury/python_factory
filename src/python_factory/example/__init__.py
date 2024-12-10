@@ -1,15 +1,8 @@
 """Python Factory Example."""
 
-import injector
-
 from python_factory.core.app.utils import UvicornUtils
 from python_factory.core.utils.log import LogModeEnum, setup_log
-from python_factory.example.app import App, AppModule, factory_for_app
-
-
-def application_factory(injector_instance: injector.Injector | None = None) -> App:
-    """Provides the application factory."""
-    return factory_for_app(injector_instance=injector_instance)
+from python_factory.example.app import App, factory_for_app
 
 
 def main() -> None:
@@ -19,7 +12,7 @@ def main() -> None:
     This must be the same for all applications.
     """
     setup_log(mode=LogModeEnum.CONSOLE)
-    application: App = application_factory()
+    application: App = factory_for_app()
     uvicorn_utils = UvicornUtils(app=application, config=application.get_config())
 
     try:
@@ -28,4 +21,4 @@ def main() -> None:
         pass
 
 
-__all__: list[str] = ["App", "application_factory", "main", "AppModule"]
+__all__: list[str] = ["App", "main"]

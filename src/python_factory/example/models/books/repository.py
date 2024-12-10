@@ -3,7 +3,6 @@
 from typing import Any
 from uuid import UUID
 
-from injector import Inject
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorClientSession
 from pymongo.results import DeleteResult
 
@@ -14,7 +13,7 @@ from python_factory.example.models.books.document import BookDocument
 class BookRepository:
     """Repository for books."""
 
-    def __init__(self, client: Inject[AsyncIOMotorClient]) -> None:  # type: ignore
+    def __init__(self, client: AsyncIOMotorClient) -> None:  # type: ignore
         """Initialize BookRepository."""
         self.client: AsyncIOMotorClient[Any] = client
 

@@ -3,11 +3,10 @@
 from typing import cast
 from uuid import UUID
 
-import injector
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Request
 
-from python_factory.core.utils.injector_fastapi import inject_depends
 from python_factory.example.entities.books import BookEntity
+from python_factory.example.models.books.repository import BookRepository
 from python_factory.example.services.books import BookService
 
 from .responses import BookListReponse, BookResponseModel
@@ -16,10 +15,14 @@ api_v1_books_router: APIRouter = APIRouter(prefix="/books")
 api_v2_books_router: APIRouter = APIRouter(prefix="/books")
 
 
+def get_book_service(request: Request) -> BookService:
+    """Provide Book Service."""
+    return BookService(book_repository=BookRepository(request.app.state.odm_client))
+
+
 @api_v1_books_router.get(path="", response_model=BookListReponse)
-@injector.inject
 def get_books(
-    books_service: BookService = inject_depends(BookService),
+    books_service: BookService = Depends(get_book_service),
 ) -> BookListReponse:
     """Get all books.
 
@@ -41,10 +44,9 @@ def get_books(
 
 
 @api_v1_books_router.get(path="/{book_id}", response_model=BookResponseModel)
-@injector.inject
 def get_book(
     book_id: UUID,
-    books_service: BookService = inject_depends(BookService),
+    books_service: BookService = Depends(get_book_service),
 ) -> BookResponseModel:
     """Get a book.
 

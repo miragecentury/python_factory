@@ -35,7 +35,10 @@ class FastAPIConfigAbstract(ABC, BaseModel):
 
 
 class FastAPIAbstract(ABC):
-    """Application integration with FastAPI."""
+    """Application integration with FastAPI.
+
+    TODO: Replace by a Factory pattern.
+    """
 
     def __init__(
         self,

@@ -3,7 +3,6 @@
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from fastapi import FastAPI
-from injector import Injector, Module, inject
 
 if TYPE_CHECKING:
     from python_factory.core.app.base.config_abstract import AppConfigAbstract
@@ -22,10 +21,6 @@ class BaseApplicationProtocol(Protocol):
         """Get the ASGI application."""
         raise NotImplementedError
 
-    def get_injector(self) -> Injector:
-        """Get the injector."""
-        raise NotImplementedError
-
 
 @runtime_checkable
 class PluginProtocol(Protocol):
@@ -35,8 +30,6 @@ class PluginProtocol(Protocol):
         INJECTOR_MODULE (type[Module]): The module for the plugin.
 
     """
-
-    INJECTOR_MODULE: type[Module]
 
     def pre_conditions_check(self, application: BaseApplicationProtocol) -> bool:
         """Check the pre-conditions for the plugin.
@@ -49,7 +42,6 @@ class PluginProtocol(Protocol):
         """
         raise NotImplementedError
 
-    @inject
     def on_load(self, application: BaseApplicationProtocol) -> None:
         """The actions to perform on load for the plugin.
 
@@ -61,7 +53,6 @@ class PluginProtocol(Protocol):
         """
         raise NotImplementedError
 
-    @inject
     async def on_startup(self, application: BaseApplicationProtocol) -> None:
         """The actions to perform on startup for the plugin.
 

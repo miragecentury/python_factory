@@ -7,6 +7,9 @@ services:
       - ./docker/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
       - "4317:4317"
+    # networks:
+    #   - devcontainer
+    #   - default
   mongo:
     image: docker.io/mongo:latest
     ports:
@@ -20,10 +23,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    networks:
-      - devcontainer
-      - default
+    # networks:
+    #   - devcontainer
+    #   - default
 
-networks:
-  devcontainer:
-    driver: bridge
+# networks:
+#   devcontainer:
+#     driver: bridge

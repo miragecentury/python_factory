@@ -2,7 +2,6 @@
 
 from typing import Any
 
-import injector
 from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.metrics import set_meter_provider
@@ -36,12 +35,10 @@ from .configs import OpenTelemetryConfig
 from .exceptions import OpenTelemetryPluginConfigError
 
 
-class OpenTelemetryPluginModule(injector.Module):
+class OpenTelemetryPluginModule:
     """Configure the injection bindings for OpenTelemetryPlugin."""
 
-    @injector.singleton
-    @injector.provider
-    def resource_factory(self, application: injector.Inject[BaseApplicationProtocol]) -> Resource:
+    def resource_factory(self, application: BaseApplicationProtocol) -> Resource:
         """Build a resource object for OpenTelemetry from the application and configs.
 
         Args:
@@ -59,12 +56,10 @@ class OpenTelemetryPluginModule(injector.Module):
             }
         )
 
-    @injector.singleton
-    @injector.provider
     def meter_provider_factory(
         self,
-        resource: injector.Inject[Resource],
-        opentelemetry_config: injector.Inject[OpenTelemetryConfig],
+        resource: Resource,
+        opentelemetry_config: OpenTelemetryConfig,
     ) -> MeterProvider:
         """Build a meter provider object for OpenTelemetry.
 
@@ -115,12 +110,10 @@ class OpenTelemetryPluginModule(injector.Module):
 
         return meter_provider
 
-    @injector.singleton
-    @injector.provider
     def tracer_provider_factory(
         self,
-        resource: injector.Inject[Resource],
-        opentelemetry_config: injector.Inject[OpenTelemetryConfig],
+        resource: Resource,
+        opentelemetry_config: OpenTelemetryConfig,
     ) -> TracerProvider:
         """Provides a tracer provider for OpenTelemetry.
 
@@ -183,11 +176,9 @@ class OpenTelemetryPluginModule(injector.Module):
 
         return tracer_provider
 
-    @injector.singleton
-    @injector.provider
     def provider_open_telemetry_config(
         self,
-        base_application: injector.Inject["BaseApplicationProtocol"],
+        base_application: BaseApplicationProtocol,
     ) -> OpenTelemetryConfig:
         """Provide the OpenTelemetry configuration.
 

@@ -2,8 +2,6 @@
 
 from typing import Any
 
-import injector
-
 from python_factory.core.protocols import BaseApplicationProtocol
 from python_factory.core.utils.importlib import get_path_file_in_package
 from python_factory.core.utils.yaml_reader import (
@@ -15,14 +13,12 @@ from .configs import ODMConfig
 from .exceptions import ODMPluginConfigError
 
 
-class ODMPluginModule(injector.Module):
+class ODMPluginModule:
     """The module for the ODM plugin."""
 
-    @injector.singleton
-    @injector.provider
     def odm_config(
         self,
-        base_application: injector.Inject["BaseApplicationProtocol"],
+        base_application: "BaseApplicationProtocol",
     ) -> ODMConfig:
         """Provide the ODM configuration object.
 
