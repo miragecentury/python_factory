@@ -126,7 +126,10 @@ class ODMBuilder:
             )
 
         self._odm_client = AsyncIOMotorClient(
-            host=odm_config.mongo_uri,
+            host=odm_config.uri,
+            connect=True,
+            connectTimeoutMS=odm_config.connection_timeout_ms,
+            serverSelectionTimeoutMS=odm_config.connection_timeout_ms,
         )
 
         return self
@@ -163,7 +166,7 @@ class ODMBuilder:
                     "build_odm_config method or through parameter."
                 )
 
-            database_name = odm_config.mongo_database
+            database_name = odm_config.database
 
         if odm_client is None:
             odm_client = self._odm_client

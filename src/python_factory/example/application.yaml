@@ -18,5 +18,5 @@ opentelemetry:
   activate: "${OTEL_ACTIVE:false}"
 
 odm:
-  mongo_uri: "${MONGO_URI:mongodb://localhost:27017}"
-  mongo_database: "test"
+  uri: "${MONGO_URI:mongodb://localhost:27017}"
+  database: "test"

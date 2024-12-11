@@ -65,4 +65,3 @@ def factory_for_app(app_config: AppConfig | None = None) -> App:
     application: App = App(config=app_config)
 
     return application
-    return application
