@@ -1,12 +1,12 @@
 """Protocols for the base application."""
 
-from typing import TYPE_CHECKING, ClassVar, Protocol, runtime_checkable
+from abc import abstractmethod
+from typing import ClassVar, Protocol, runtime_checkable
 
 from beanie import Document
 from fastapi import FastAPI
 
-if TYPE_CHECKING:
-    from python_factory.core.app.base.config_abstract import AppConfigAbstract
+from python_factory.core.app.base.config_abstract import AppConfigAbstract
 
 
 class BaseApplicationProtocol(Protocol):
@@ -14,15 +14,15 @@ class BaseApplicationProtocol(Protocol):
 
     PACKAGE_NAME: str
 
-    odm_document_models: ClassVar[list[type[Document]]]
+    ODM_DOCUMENT_MODELS: ClassVar[list[type[Document]]]
 
+    @abstractmethod
     def get_config(self) -> "AppConfigAbstract":
         """Get the application configuration."""
-        raise NotImplementedError
 
+    @abstractmethod
     def get_asgi_app(self) -> FastAPI:
         """Get the ASGI application."""
-        raise NotImplementedError
 
 
 @runtime_checkable
@@ -34,6 +34,7 @@ class PluginProtocol(Protocol):
 
     """
 
+    @abstractmethod
     def pre_conditions_check(self, application: BaseApplicationProtocol) -> bool:
         """Check the pre-conditions for the plugin.
 
@@ -43,8 +44,8 @@ class PluginProtocol(Protocol):
         Returns:
             bool: True if the pre-conditions are met, False otherwise.
         """
-        raise NotImplementedError
 
+    @abstractmethod
     def on_load(self, application: BaseApplicationProtocol) -> None:
         """The actions to perform on load for the plugin.
 
@@ -54,8 +55,8 @@ class PluginProtocol(Protocol):
         Returns:
             None
         """
-        raise NotImplementedError
 
+    @abstractmethod
     async def on_startup(self, application: BaseApplicationProtocol) -> None:
         """The actions to perform on startup for the plugin.
 
@@ -65,8 +66,8 @@ class PluginProtocol(Protocol):
         Returns:
             None
         """
-        raise NotImplementedError
 
+    @abstractmethod
     async def on_shutdown(self, application: BaseApplicationProtocol) -> None:
         """The actions to perform on shutdown for the plugin.
 
@@ -76,4 +77,3 @@ class PluginProtocol(Protocol):
         Returns:
             None
         """
-        raise NotImplementedError

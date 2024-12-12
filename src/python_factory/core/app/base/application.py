@@ -24,7 +24,7 @@ class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
 
     CONFIG_CLASS: ClassVar[type[AppConfigAbstract]] = AppConfigAbstract
 
-    odm_document_models: ClassVar[list[type[Document]]] = []
+    ODM_DOCUMENT_MODELS: ClassVar[list[type[Document]]] = []
 
     def __init__(self, config: AppConfigAbstract) -> None:
         """Instantiate the application.
@@ -58,7 +58,7 @@ class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
         This must be the same for all applications.
         """
         setup_log(mode=LogModeEnum.CONSOLE)
-        application: cls = cls.build()
+        application: BaseApplication = cls.build()
         uvicorn_utils = UvicornUtils(app=application)
 
         try:

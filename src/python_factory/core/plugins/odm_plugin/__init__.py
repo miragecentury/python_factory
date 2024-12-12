@@ -1,8 +1,9 @@
 """Oriented Data Model (ODM) plugin package."""
 
+from logging import INFO, Logger, getLogger
 from typing import Any
 
-from beanie import init_beanie  # type: ignore
+from beanie import init_beanie  # pyright: ignore[reportUnknownVariableType]
 from motor.motor_asyncio import AsyncIOMotorClient
 from structlog.stdlib import BoundLogger, get_logger
 
@@ -35,6 +36,9 @@ def on_load(
         application (BaseApplicationProtocol): The application.
     """
     del application
+    # Configure the pymongo logger to INFO level
+    pymongo_logger: Logger = getLogger("pymongo")
+    pymongo_logger.setLevel(INFO)
     _logger.debug("ODM plugin loaded.")
 
 
@@ -50,10 +54,17 @@ async def on_startup(
     Returns:
         None
     """
-    odm_factory: ODMBuilder = ODMBuilder(application=application)
-    odm_factory.build_odm_config()
-    odm_factory.build_client()
-    odm_factory.build_database()
+    try:
+        odm_factory: ODMBuilder = ODMBuilder(application=application).build_all()
+    except Exception as exception:  # pylint: disable=broad-except
+        _logger.error(f"ODM plugin failed to start. {exception}")
+        return
+
+    if odm_factory.odm_database is None or odm_factory.odm_client is None:
+        _logger.error(
+            f"ODM plugin failed to start. Database: {odm_factory.odm_database} - " f"Client: {odm_factory.odm_client}"
+        )
+        return
     # TODO: Find a way to add type to the state
     application.get_asgi_app().state.odm_client = odm_factory.odm_client
     application.get_asgi_app().state.odm_database = odm_factory.odm_database
@@ -61,15 +72,15 @@ async def on_startup(
     # TODO: Find a better way to initialize beanie with the document models of the concrete application
     # through an hook in the application ?
     await init_beanie(
-        database=odm_factory.odm_database,  # type: ignore
-        document_models=application.odm_document_models,
+        database=odm_factory.odm_database,
+        document_models=application.ODM_DOCUMENT_MODELS,
     )
 
-    _logger.debug(
-        f"ODM plugin started. Database: {odm_factory.odm_database.name} - "  # type: ignore
-        f"Client: {odm_factory.odm_client.address} - "  # type: ignore
-        f"Document models: {application.odm_document_models}"
-    )  # type: ignore
+    _logger.info(
+        f"ODM plugin started. Database: {odm_factory.odm_database.name} - "
+        f"Client: {odm_factory.odm_client.address} - "
+        f"Document models: {application.ODM_DOCUMENT_MODELS}"
+    )
 
 
 async def on_shutdown(application: BaseApplicationProtocol) -> None:

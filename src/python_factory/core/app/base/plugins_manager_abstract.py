@@ -112,9 +112,19 @@ class ApplicationPluginManagerAbstract(ABC):
     async def plugins_on_startup(self) -> None:
         """Actions to perform on startup for the plugins."""
         for plugin in self._plugins:
-            await plugin.on_startup(application=cast(BaseApplicationProtocol, self))
+            try:
+                await plugin.on_startup(application=cast(BaseApplicationProtocol, self))
+            except Exception as exception:
+                raise ApplicationPluginManagerException(
+                    f"Error during the startup of the plugin {plugin.__class__.__name__}"
+                ) from exception
 
     async def plugins_on_shutdown(self) -> None:
         """Actions to perform on shutdown for the plugins."""
         for plugin in self._plugins:
-            await plugin.on_shutdown(application=cast(BaseApplicationProtocol, self))
+            try:
+                await plugin.on_shutdown(application=cast(BaseApplicationProtocol, self))
+            except Exception as exception:
+                raise ApplicationPluginManagerException(
+                    f"Error during the shutdown of the plugin {plugin.__class__.__name__}"
+                ) from exception

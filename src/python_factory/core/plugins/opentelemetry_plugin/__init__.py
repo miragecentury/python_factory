@@ -48,11 +48,11 @@ def on_load(
         application (BaseApplicationProtocol): The application.
     """
     # Build the OpenTelemetry Resources, TracerProvider and MeterProvider
-    otel_builder: OpenTelemetryPluginBuilder = OpenTelemetryPluginBuilder(application=application)
-    otel_builder.build_config()
-    otel_builder.build_resource()
-    otel_builder.build_tracer_provider()
-    otel_builder.build_meter_provider()
+    try:
+        otel_builder: OpenTelemetryPluginBuilder = OpenTelemetryPluginBuilder(application=application).build_all()
+    except OpenTelemetryPluginBaseException as exception:
+        _logger.error(f"OpenTelemetry plugin failed to start. {exception}")
+        return
     # Configuration is never None at this point (checked in the builder and raises an exception)
     otel_config: OpenTelemetryConfig = cast(OpenTelemetryConfig, otel_builder.config)
     # Save as state in the FastAPI application

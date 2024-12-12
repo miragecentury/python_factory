@@ -16,11 +16,7 @@ from opentelemetry.sdk.resources import (
     SERVICE_VERSION,
     Resource,
 )
-from opentelemetry.sdk.trace import (
-    SpanProcessor,
-    SynchronousMultiSpanProcessor,
-    TracerProvider,
-)
+from opentelemetry.sdk.trace import SynchronousMultiSpanProcessor, TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import set_tracer_provider
 
@@ -210,7 +206,7 @@ class OpenTelemetryPluginBuilder:
         if self._config is None:
             raise OpenTelemetryPluginConfigError("The configuration object is missing.")
 
-        active_span_processor: SpanProcessor | None = None
+        active_span_processor: SynchronousMultiSpanProcessor | None = None
 
         # Exit with a void TracerProvider if the export is not activated
         if self._config.activate is True:
@@ -251,5 +247,20 @@ class OpenTelemetryPluginBuilder:
         )
 
         set_tracer_provider(self._tracer_provider)
+
+        return self
+
+    def build_all(
+        self,
+    ) -> Self:
+        """Build all the objects for OpenTelemetry.
+
+        Returns:
+            Self: The OpenTelemetryPluginFactory object.
+        """
+        self.build_resource()
+        self.build_config()
+        self.build_meter_provider()
+        self.build_tracer_provider()
 
         return self

@@ -17,7 +17,7 @@ class App(BaseApplication):
 
     CONFIG_CLASS = AppConfig
 
-    odm_document_models: ClassVar[list[type[Document]]] = [BookDocument]
+    ODM_DOCUMENT_MODELS: ClassVar[list[type[Document]]] = [BookDocument]
 
     def __init__(self, config: AppConfig) -> None:
         """Instantiate the application with the configuration and the API router.

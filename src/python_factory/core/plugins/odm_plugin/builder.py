@@ -1,8 +1,10 @@
 """Provides the module for the ODM plugin."""
 
+import time
 from typing import Any, Self
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+from structlog.stdlib import get_logger
 
 from python_factory.core.protocols import BaseApplicationProtocol
 from python_factory.core.utils.importlib import get_path_file_in_package
@@ -13,6 +15,8 @@ from python_factory.core.utils.yaml_reader import (
 
 from .configs import ODMConfig
 from .exceptions import ODMPluginConfigError
+
+_logger = get_logger()
 
 
 class ODMBuilder:
@@ -102,6 +106,38 @@ class ODMBuilder:
             raise ODMPluginConfigError("Unable to create the application configuration model.") from exception
         return self
 
+    @classmethod
+    def _wait_client_to_be_ready(cls, client: AsyncIOMotorClient[Any], timeout_ms: int) -> None:
+        """Wait for the ODM client to be ready.
+
+        Args:
+            client (AsyncIOMotorClient): The ODM client.
+            timeout_ms (int): The timeout in milliseconds.
+
+        Raises:
+            ODMPluginConfigError: If the ODM client is not ready.
+        """
+        start_timer = time.monotonic()
+
+        def is_connected(client: AsyncIOMotorClient[Any]) -> bool:
+            """Check if the client is connected."""
+            try:
+                client.admin.command(
+                    command="ping",
+                )  # pyright: ignore
+                return True
+            except Exception:  # pylint: disable=broad-except
+                _logger.debug("ODM client is not ready.")
+                return False
+
+        while not is_connected(client) and ((time.monotonic() - start_timer) < timeout_ms):
+            if time.monotonic() - start_timer > timeout_ms:
+                raise ODMPluginConfigError("ODM client is not ready.")
+            time.sleep(0.01)
+
+        if not is_connected(client):
+            raise ODMPluginConfigError("ODM client is not ready.")
+
     def build_client(
         self,
         odm_config: ODMConfig | None = None,
@@ -131,6 +167,8 @@ class ODMBuilder:
             connectTimeoutMS=odm_config.connection_timeout_ms,
             serverSelectionTimeoutMS=odm_config.connection_timeout_ms,
         )
+
+        self._wait_client_to_be_ready(client=self._odm_client, timeout_ms=odm_config.connection_timeout_ms)
 
         return self
 
@@ -177,5 +215,20 @@ class ODMBuilder:
             )
 
         self._odm_database = odm_client.get_database(name=database_name)
+
+        return self
+
+    def build_all(self) -> Self:
+        """Build all the resources for the ODM plugin.
+
+        Returns:
+            Self: The ODM factory.
+
+        Raises:
+            ODMPluginConfigError: If the ODM configuration is not build or provided.
+        """
+        self.build_odm_config()
+        self.build_client()
+        self.build_database()
 
         return self
