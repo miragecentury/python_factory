@@ -4,12 +4,14 @@ services:
   otel_collector:
     image: otel/opentelemetry-collector:latest
     volumes:
-      - ./docker/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ./docker/otel_collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
       - "4317:4317"
+      - "4318:4318"
     # networks:
     #   - devcontainer
     #   - default
+    command: ["--config=/etc/otel-collector-config.yaml"]
   mongo:
     image: docker.io/mongo:latest
     ports:

@@ -163,7 +163,7 @@ class OpenTelemetryPluginBuilder:
 
             # Setup the Exporter
             exporter = OTLPMetricExporter(
-                endpoint=self._config.endpoint.unicode_string(),
+                endpoint=f"{self._config.endpoint.unicode_string()}v1/metrics",
                 timeout=self._config.timeout,
             )
 
@@ -215,7 +215,7 @@ class OpenTelemetryPluginBuilder:
 
             # Setup the Exporter
             exporter = OTLPSpanExporter(
-                endpoint=self._config.endpoint.unicode_string(),
+                endpoint=f"{self._config.endpoint.unicode_string()}v1/traces",
                 timeout=self._config.timeout,
             )
 
