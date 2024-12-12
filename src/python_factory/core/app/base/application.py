@@ -2,15 +2,17 @@
 
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import ClassVar, cast
+from typing import ClassVar, Self, cast
 
 import starlette.types
 from beanie import Document
 from fastapi import FastAPI
 
 from python_factory.core.api import api
+from python_factory.core.app.utils import UvicornUtils
+from python_factory.core.utils.log import LogModeEnum, setup_log
 
-from .config_abstract import AppConfigAbstract
+from .config_abstract import AppConfigAbstract, AppConfigBuilder
 from .fastapi_application_abstract import FastAPIAbstract
 from .plugins_manager_abstract import ApplicationPluginManagerAbstract
 
@@ -20,10 +22,12 @@ class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
 
     PACKAGE_NAME: str = ""
 
+    CONFIG_CLASS: ClassVar[type[AppConfigAbstract]] = AppConfigAbstract
+
     odm_document_models: ClassVar[list[type[Document]]] = []
 
     def __init__(self, config: AppConfigAbstract) -> None:
-        """Instanciate the application.
+        """Instantiate the application.
 
         Args:
             config (AppConfigAbstract): The application configuration.
@@ -46,6 +50,36 @@ class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
         )
         ApplicationPluginManagerAbstract.__init__(self=cast(ApplicationPluginManagerAbstract, self))
         self._on_load()
+
+    @classmethod
+    def main(cls) -> None:
+        """Main function.
+
+        This must be the same for all applications.
+        """
+        setup_log(mode=LogModeEnum.CONSOLE)
+        application: cls = cls.build()
+        uvicorn_utils = UvicornUtils(app=application)
+
+        try:
+            uvicorn_utils.serve()
+        except KeyboardInterrupt:
+            pass
+
+    @classmethod
+    def build(cls, config: AppConfigAbstract | None = None) -> Self:
+        """Build the application.
+
+        Args:
+            config (AppConfigAbstract | None, optional): The application configuration. Defaults to None.
+        """
+        if config is None:
+            config_builder: AppConfigBuilder = AppConfigBuilder(
+                package_name=cls.PACKAGE_NAME, config_class=cls.CONFIG_CLASS
+            )
+            config = config_builder.build()
+
+        return cls(config=config)
 
     @asynccontextmanager
     async def fastapi_lifespan(self, fastapi_application: FastAPI) -> AsyncGenerator[None, None]:

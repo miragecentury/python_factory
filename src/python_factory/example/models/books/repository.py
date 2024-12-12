@@ -40,9 +40,7 @@ class BookRepository:
             async with await self.client.start_session() as standalone_session:
                 return await self.get_one_by_id(document_id=document_id, session=standalone_session)
 
-        find_one: BookDocument | None = await BookDocument.find_one(  # type: ignore
-            BookDocument.id == document_id, session=session
-        )
+        find_one: BookDocument | None = await BookDocument.find_one(BookDocument.id == document_id, session=session)
 
         if find_one is None:
             return None

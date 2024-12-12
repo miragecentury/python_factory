@@ -5,14 +5,14 @@ import uvicorn.server
 
 from python_factory.core.utils.log import clean_uvicorn_logger
 
-from .base import AppConfigAbstract, BaseApplication
+from ..protocols import BaseApplicationProtocol
 
 
 class UvicornUtils:
     """Provides utilities for Uvicorn."""
 
-    def __init__(self, app: BaseApplication, config: AppConfigAbstract) -> None:
-        """Instanticate the factory.
+    def __init__(self, app: BaseApplicationProtocol) -> None:
+        """Instantiate the factory.
 
         Args:
             app (BaseApplication): The application.
@@ -21,8 +21,7 @@ class UvicornUtils:
         Returns:
             None
         """
-        self._app: BaseApplication = app
-        self._config: AppConfigAbstract = config
+        self._app: BaseApplicationProtocol = app
 
     def build_uvicorn_config(self) -> uvicorn.Config:
         """Build the Uvicorn configuration.
@@ -32,10 +31,10 @@ class UvicornUtils:
         """
         config = uvicorn.Config(
             app=self._app.get_asgi_app(),
-            host=self._config.host,
-            port=self._config.port,
-            reload=self._config.reload,
-            workers=self._config.workers,
+            host=self._app.get_config().host,
+            port=self._app.get_config().port,
+            reload=self._app.get_config().reload,
+            workers=self._app.get_config().workers,
         )
         clean_uvicorn_logger()
         return config

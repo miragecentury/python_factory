@@ -61,8 +61,8 @@ async def on_startup(
     # TODO: Find a better way to initialize beanie with the document models of the concrete application
     # through an hook in the application ?
     await init_beanie(
-        database=odm_factory.odm_database,
-        document_models=application.odm_document_models,  # type: ignore
+        database=odm_factory.odm_database,  # type: ignore
+        document_models=application.odm_document_models,
     )
 
     _logger.debug(
