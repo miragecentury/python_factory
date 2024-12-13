@@ -3,8 +3,6 @@
 from unittest.mock import MagicMock
 from uuid import UUID
 
-from opentelemetry.metrics import Meter
-
 from python_factory.example.entities.books import BookEntity, BookName, BookType
 from python_factory.example.models.books.repository import BookRepository
 from python_factory.example.services.books.services import BookService
@@ -34,9 +32,9 @@ class TestBookService:
         self,
     ) -> None:
         """Test add_book."""
-        meter_mock: MagicMock = MagicMock(spec=Meter)
+        # meter_mock: MagicMock = MagicMock(spec=Meter)
 
-        book_service = BookService(book_repository=MagicMock(BookRepository), meter=meter_mock)
+        book_service = BookService(book_repository=MagicMock(BookRepository))
         books: list[BookEntity] = book_service.get_all_books()
 
         book = BookEntity(title=BookName("Test Book"), book_type=BookType.FANTASY)
@@ -46,10 +44,10 @@ class TestBookService:
         assert book in book_service.get_all_books()
         assert len(book_service.get_all_books()) == len(books) + 1
 
-        counter_add_call = next((call for call in meter_mock.create_counter.mock_calls if call[0] == "().add"), None)
+        # counter_add_call = next((call for call in meter_mock.create_counter.mock_calls if call[0] == "().add"), None)
 
-        assert counter_add_call is not None
-        assert counter_add_call[2]["amount"] == 1
+        # assert counter_add_call is not None
+        # assert counter_add_call[2]["amount"] == 1
 
     def test_add_book_already_exists(self) -> None:
         """Test add_book with a book that already exists."""

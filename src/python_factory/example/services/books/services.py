@@ -16,15 +16,33 @@ class BookService:
     book_store: ClassVar[dict[UUID, BookEntity]] = {}
 
     # Metrics Definitions
+    METER_COUNTER_BOOK_GET_NAME: str = "book_get"
     METER_COUNTER_BOOK_ADD_NAME: str = "book_add"
     METER_COUNTER_BOOK_REMOVE_NAME: str = "book_remove"
     METER_COUNTER_BOOK_UPDATE_NAME: str = "book_update"
     # ====================
 
+    meter: metrics.Meter = metrics.get_meter(__name__)
+
+    METER_COUNTER_BOOK_GET: metrics.Counter = meter.create_counter(
+        name=METER_COUNTER_BOOK_GET_NAME, description="The number of books retrieved."
+    )
+    METER_COUNTER_BOOK_ADD: metrics.Counter = meter.create_counter(
+        name=METER_COUNTER_BOOK_ADD_NAME,
+        description="The number of books added.",
+    )
+    METER_COUNTER_BOOK_REMOVE: metrics.Counter = meter.create_counter(
+        name=METER_COUNTER_BOOK_REMOVE_NAME,
+        description="The number of books removed.",
+    )
+    METER_COUNTER_BOOK_UPDATE: metrics.Counter = meter.create_counter(
+        name=METER_COUNTER_BOOK_UPDATE_NAME,
+        description="The number of books updated.",
+    )
+
     def __init__(
         self,
         book_repository: BookRepository,
-        meter: metrics.Meter | None = None,
     ) -> None:
         """Initialize the service.
 
@@ -37,22 +55,6 @@ class BookService:
 
         """
         self.book_repository: BookRepository = book_repository
-
-        if meter is None:
-            meter = metrics.get_meter(name=__name__)
-
-        self._meter_counter_book_add: metrics.Counter = meter.create_counter(
-            name=self.METER_COUNTER_BOOK_ADD_NAME,
-            description="The number of books added.",
-        )
-        self._meter_counter_book_remove: metrics.Counter = meter.create_counter(
-            name=self.METER_COUNTER_BOOK_REMOVE_NAME,
-            description="The number of books removed.",
-        )
-        self._meter_counter_book_update = meter.create_counter(
-            name=self.METER_COUNTER_BOOK_UPDATE_NAME,
-            description="The number of books updated.",
-        )
 
         # Build the book store if it is empty
         if len(self.book_store) == 0:
@@ -94,7 +96,7 @@ class BookService:
 
         self.book_store[book.id] = book
 
-        self._meter_counter_book_add.add(amount=1)
+        self.METER_COUNTER_BOOK_ADD.add(amount=1)
 
     def get_book(self, book_id: UUID) -> BookEntity:
         """Get a book.
@@ -111,6 +113,8 @@ class BookService:
         if book_id not in self.book_store:
             raise ValueError(f"Book with id {book_id} does not exist.")
 
+        self.METER_COUNTER_BOOK_GET.add(amount=1, attributes={"book_count": 1})
+
         return self.book_store[book_id]
 
     def get_all_books(self) -> list[BookEntity]:
@@ -119,6 +123,7 @@ class BookService:
         Returns:
             list[BookEntity]: All books
         """
+        self.METER_COUNTER_BOOK_GET.add(amount=1, attributes={"book_count": len(self.book_store)})
         return list(self.book_store.values())
 
     @trace_span(name="Remove Book")
@@ -136,7 +141,7 @@ class BookService:
 
         del self.book_store[book_id]
 
-        self._meter_counter_book_remove.add(amount=1)
+        self.METER_COUNTER_BOOK_REMOVE.add(amount=1)
 
     @trace_span(name="Update Book")
     def update_book(self, book: BookEntity) -> None:
@@ -153,4 +158,4 @@ class BookService:
 
         self.book_store[book.id] = book
 
-        self._meter_counter_book_update.add(amount=1)
+        self.METER_COUNTER_BOOK_UPDATE.add(amount=1)

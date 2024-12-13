@@ -8,8 +8,23 @@ receivers:
 processors:
   batch:
 exporters:
+  otlp/tempo:
+    endpoint: "tempo:4317"
+    timeout: 5s
+    tls:
+      insecure: true
+
+  # Data sources: metrics
+  prometheusremotewrite:
+    endpoint: "http://prometheus:9090/api/v1/write"
+    tls:
+      insecure: true
+    namespace: application
+    add_metric_suffixes: true
+    resource_to_telemetry_conversion:
+      enabled: true
+
   debug:
-    verbosity: detailed
 extensions:
 service:
   extensions: []
@@ -17,11 +32,11 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug]
+      exporters: [otlp/tempo, debug]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug]
+      exporters: [prometheusremotewrite, debug]
     logs:
       receivers: [otlp]
       processors: [batch]

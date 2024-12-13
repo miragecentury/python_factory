@@ -16,7 +16,7 @@ class OpenTelemetryMeterConfig(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     reader_interval_millis: float = Field(
-        default=ONE_MINUTE_IN_MILLIS,
+        default=ONE_SECOND_IN_MILLIS,
         description="The interval in miliseconds to read and export metrics.",
     )
 
