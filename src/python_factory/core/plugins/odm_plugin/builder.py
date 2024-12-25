@@ -30,21 +30,33 @@ class ODMBuilder:
     ```python
     # Example of using the ODMFactory
     odm_factory: ODMFactory = ODMFactory(application=application)
-    odm_factory.build_odm_config()
-    odm_factory.build_client()
-    odm_factory.build_database()
+    odm_factory.build_all()
     # Access the ODM database created
     database: AsyncIOMotorDatabase[Any] = odm_factory.database
     ```
 
     """
 
-    def __init__(self, application: BaseApplicationProtocol) -> None:
-        """Initialize the ODMFactory."""
+    def __init__(
+        self,
+        application: BaseApplicationProtocol,
+        odm_config: ODMConfig | None = None,
+        odm_client: AsyncIOMotorClient[Any] | None = None,
+        odm_database: AsyncIOMotorDatabase[Any] | None = None,
+    ) -> None:
+        """Initialize the ODMFactory.
+
+        Args:
+            application (BaseApplicationProtocol): The application.
+            odm_config (ODMConfig): The ODM configuration for injection. (Default is None)
+            odm_client (AsyncIOMotorClient): The ODM client for injection. (Default is None)
+            odm_database (AsyncIOMotorDatabase): The ODM database for injection. (Default is None)
+
+        """
         self._application: BaseApplicationProtocol = application
-        self._config: ODMConfig | None = None
-        self._odm_client: AsyncIOMotorClient[Any] | None = None
-        self._odm_database: AsyncIOMotorDatabase[Any] | None = None
+        self._config: ODMConfig | None = odm_config
+        self._odm_client: AsyncIOMotorClient[Any] | None = odm_client
+        self._odm_database: AsyncIOMotorDatabase[Any] | None = odm_database
 
     @property
     def config(self) -> ODMConfig | None:
@@ -84,6 +96,9 @@ class ODMBuilder:
         Raises:
             ODMPluginConfigError: If the package name is not set or the configuration file is not found.
         """
+        if self._config is not None:
+            return self
+
         if self._application.PACKAGE_NAME == "":
             raise ODMPluginConfigError("The package name must be set in the concrete application class.")
         # Read the application configuration file
@@ -140,12 +155,8 @@ class ODMBuilder:
 
     def build_client(
         self,
-        odm_config: ODMConfig | None = None,
     ) -> Self:
         """Build the ODM client.
-
-        Args:
-            odm_config (ODMConfig): The ODM configuration.
 
         Returns:
             Self: The ODM factory.
@@ -153,40 +164,33 @@ class ODMBuilder:
         Raises:
             ODMPluginConfigError: If the ODM configuration is not build or provided.
         """
-        if odm_config is None:
-            odm_config = self._config
-        if odm_config is None:
+        if self._odm_client is not None:
+            return self
+
+        if self._config is None:
             raise ODMPluginConfigError(
                 "ODM configuration is not set. Provide the ODM configuration using "
                 "build_odm_config method or through parameter."
             )
 
         self._odm_client = AsyncIOMotorClient(
-            host=odm_config.uri,
+            host=self._config.uri,
             connect=True,
-            connectTimeoutMS=odm_config.connection_timeout_ms,
-            serverSelectionTimeoutMS=odm_config.connection_timeout_ms,
+            connectTimeoutMS=self._config.connection_timeout_ms,
+            serverSelectionTimeoutMS=self._config.connection_timeout_ms,
         )
 
-        self._wait_client_to_be_ready(client=self._odm_client, timeout_ms=odm_config.connection_timeout_ms)
+        self._wait_client_to_be_ready(client=self._odm_client, timeout_ms=self._config.connection_timeout_ms)
 
         return self
 
     def build_database(
         self,
-        odm_client: AsyncIOMotorClient[Any] | None = None,
-        odm_config: ODMConfig | None = None,
-        database_name: str | None = None,
     ) -> Self:
         """Build the ODM database.
 
         The ODM client and ODM configuration are recommended to be provided through call to the build_client and
         build_odm_config methods.
-
-        Args:
-            odm_config (ODMConfig): The ODM configuration. (Default is None)
-            odm_client (AsyncIOMotorClient): The ODM client. (Default is None)
-            database_name (str): The database name. (Default is None)
 
         Returns:
             Any: The ODM database.
@@ -194,27 +198,23 @@ class ODMBuilder:
         Raises:
             ODMPluginConfigError: If the ODM configuration is not build or provided.
         """
-        if database_name is None:
-            if odm_config is None:
-                odm_config = self._config
+        if self._odm_database is not None:
+            return self
 
-            if odm_config is None:
-                raise ODMPluginConfigError(
-                    "ODM configuration is not set. Provide the ODM configuration using "
-                    "build_odm_config method or through parameter."
-                )
+        if self._config is None:
+            raise ODMPluginConfigError(
+                "ODM configuration is not set. Provide the ODM configuration using "
+                "build_odm_config method or through parameter."
+            )
 
-            database_name = odm_config.database
+        database_name: str = self._config.database
 
-        if odm_client is None:
-            odm_client = self._odm_client
-
-        if odm_client is None:
+        if self._odm_client is None:
             raise ODMPluginConfigError(
                 "ODM client is not set. Provide the ODM client using " "build_client method or through parameter."
             )
 
-        self._odm_database = odm_client.get_database(name=database_name)
+        self._odm_database = self._odm_client.get_database(name=database_name)
 
         return self
 
