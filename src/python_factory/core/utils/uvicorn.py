@@ -3,9 +3,8 @@
 import uvicorn
 import uvicorn.server
 
+from python_factory.core.protocols import BaseApplicationProtocol
 from python_factory.core.utils.log import clean_uvicorn_logger
-
-from ..protocols import BaseApplicationProtocol
 
 
 class UvicornUtils:

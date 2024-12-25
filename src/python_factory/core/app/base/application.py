@@ -9,7 +9,6 @@ from beanie import Document
 from fastapi import FastAPI
 
 from python_factory.core.api import api
-from python_factory.core.app.utils import UvicornUtils
 from python_factory.core.utils.log import LogModeEnum, setup_log
 
 from .config_abstract import AppConfigAbstract, AppConfigBuilder
@@ -57,6 +56,10 @@ class BaseApplication(FastAPIAbstract, ApplicationPluginManagerAbstract):
 
         This must be the same for all applications.
         """
+        from python_factory.core.utils.uvicorn import (  # pylint: disable=import-outside-toplevel
+            UvicornUtils,
+        )
+
         setup_log(mode=LogModeEnum.CONSOLE)
         application: BaseApplication = cls.build()
         uvicorn_utils = UvicornUtils(app=application)
