@@ -65,6 +65,14 @@ Included with the usage of buildpacks
 npm install -g @apideck/portman
 ```
 
+### MongoDB
+
+<https://docs.mongodb.com/manual/installation/>
+
+```bash
+sudo apt install -y mongodb
+```
+
 ### 1- Dev Environment
 
 ```bash

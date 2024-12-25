@@ -1,22 +1,20 @@
 """Model for Book."""
 
 from typing import Annotated
-from uuid import UUID, uuid4
 
-from beanie import Document, Indexed  # pyright: ignore[reportUnknownVariableType]
-from pydantic import Field
+from beanie import Indexed  # pyright: ignore[reportUnknownVariableType]
 
+from python_factory.core.plugins.odm_plugin.documents import BaseDocument
 from python_factory.example.entities.books import BookName, BookType
 
 
-class BookDocument(Document):
+class BookDocument(BaseDocument):
     """BookModel."""
 
-    id: Annotated[UUID, Indexed()] = Field(default_factory=uuid4)  # type: ignore
     title: Annotated[BookName, Indexed(unique=True)]
     book_type: Annotated[BookType, Indexed()]
 
-    class Meta:
+    class Settings(BaseDocument.Settings):
         """Meta class for BookModel."""
 
         collection: str = "books"
