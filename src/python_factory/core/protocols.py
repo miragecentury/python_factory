@@ -1,12 +1,13 @@
 """Protocols for the base application."""
 
 from abc import abstractmethod
-from typing import ClassVar, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, ClassVar, Protocol, runtime_checkable
 
 from beanie import Document
 from fastapi import FastAPI
 
-from python_factory.core.app.base.config_abstract import AppConfigAbstract
+if TYPE_CHECKING:
+    from python_factory.core.app.base.config_abstract import AppConfigAbstract
 
 
 class BaseApplicationProtocol(Protocol):
