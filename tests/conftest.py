@@ -3,13 +3,13 @@
 import asyncio
 import logging
 import os
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Generator
 from typing import Any
 from uuid import uuid4
 
 import pytest
+from mirakuru import TCPExecutor
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from pymongo import MongoClient
 from pytest_mongo import factories
 from structlog.stdlib import get_logger
 
@@ -38,26 +38,38 @@ setup_log(
 )
 
 
+@pytest.fixture(scope="session")
+def database_for_function(
+    mongodb_with_flexible_executable: TCPExecutor,  # pylint: disable=redefined-outer-name
+) -> Generator[TCPExecutor, None, None]:
+    """Cleanup the database.
+
+    Args:
+        mongodb_with_flexible_executable (TCPExecutor): The TCP executor for mongodb server.
+
+    """
+    yield mongodb_with_flexible_executable
+    mongodb_with_flexible_executable.stop()
+
+
 @pytest.fixture(scope="function")  # pyright: ignore
 async def async_motor_database(
-    mongodb_with_flexible_executable: MongoClient[Any],  # pylint: disable=redefined-outer-name
+    database_for_function: TCPExecutor,  # pylint: disable=redefined-outer-name
 ) -> AsyncGenerator[AsyncIOMotorDatabase[Any], None]:
     """Create an async motor database.
 
     Args:
-        mongodb_with_flexible_executable (MongoClient): The MongoDB client.
+        database_for_function (TCPExecutor): The TCP executor for mongodb server.
 
     Yields:
         Generator[AsyncIOMotorDatabase, None, None]: The async motor database.
 
     """
     _logger.debug(
-        f"Creating AsyncIOMotorDatabase with "
-        f"{mongodb_with_flexible_executable.host=} and "
-        f"{mongodb_with_flexible_executable.port=}"
+        f"Creating AsyncIOMotorDatabase with " f"{database_for_function.host=} and " f"{database_for_function.port=}"
     )
     client: AsyncIOMotorClient[Any] = AsyncIOMotorClient(
-        host=f"mongodb://{mongodb_with_flexible_executable.host}:{mongodb_with_flexible_executable.port}",
+        host=f"mongodb://{database_for_function.host}:{database_for_function.port}",
         serverMonitoringMode="stream",  # prevent error on teardown of the client
         connectTimeoutMS=CONNECTION_TIMEOUT,
         socketTimeoutMS=SOCKET_TIMEOUT,
