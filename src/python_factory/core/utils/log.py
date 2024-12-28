@@ -3,12 +3,41 @@
 import logging
 import sys
 from enum import StrEnum, auto
-from typing import Any
+from typing import Annotated, Any
 
 import structlog
+from pydantic import BaseModel, BeforeValidator
 from structlog.types import EventDict
 
 _logger = structlog.getLogger(__package__)
+
+
+def ensure_logging_level(level: Any) -> int:
+    """Ensure the logging level.
+
+    Args:
+        level (Any): The logging level.
+
+    Returns:
+        int: The logging level.
+    """
+    if isinstance(level, int):
+        return level
+
+    if isinstance(level, str):
+        try:
+            return getattr(logging, str(level).upper())
+        except AttributeError as exception:
+            raise ValueError(f"Invalid logging level: {level}") from exception
+
+    raise ValueError(f"Invalid logging level: {level}")
+
+
+class LoggingConfig(BaseModel):
+    """Logging configuration."""
+
+    name: str
+    level: Annotated[int, BeforeValidator(ensure_logging_level)]
 
 
 class LogModeEnum(StrEnum):
@@ -51,12 +80,15 @@ def _drop_color_message_key(_: Any, __: Any, event_dict: EventDict) -> EventDict
     return event_dict
 
 
-def setup_log(mode: LogModeEnum = LogModeEnum.CONSOLE, log_level: str = "DEBUG") -> None:
+def setup_log(
+    mode: LogModeEnum = LogModeEnum.CONSOLE, log_level: str = "DEBUG", logging_config: list[LoggingConfig] | None = None
+) -> None:
     """Prepares the logging configuration.
 
     Args:
         mode (LogMode): The logging mode to use.
         log_level (str): The log level to use.
+        logging_config (List[LoggingConfig], optional): The logging configuration. Defaults to None.
 
     Returns:
         None
@@ -125,6 +157,10 @@ def setup_log(mode: LogModeEnum = LogModeEnum.CONSOLE, log_level: str = "DEBUG")
     root_logger: logging.Logger = logging.getLogger()
     root_logger.addHandler(handler)
     root_logger.setLevel(log_level.upper())
+
+    for logging_config_item in logging_config or []:
+        logger = logging.getLogger(logging_config_item.name)
+        logger.setLevel(logging_config_item.level)
 
     def handle_exception(exc_type: Any, exc_value: Any, exc_traceback: Any) -> None:
         """Handle uncaught exceptions.

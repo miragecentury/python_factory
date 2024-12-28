@@ -1,6 +1,7 @@
 """Cong Test."""
 
 import asyncio
+import logging
 import os
 from collections.abc import AsyncGenerator
 from typing import Any
@@ -12,7 +13,7 @@ from pymongo import MongoClient
 from pytest_mongo import factories
 from structlog.stdlib import get_logger
 
-from python_factory.core.utils.log import LogModeEnum, setup_log
+from python_factory.core.utils.log import LoggingConfig, LogModeEnum, setup_log
 
 setup_log(mode=LogModeEnum.CONSOLE)
 
@@ -23,6 +24,17 @@ SOCKET_TIMEOUT: int = 300
 
 mongodb_with_flexible_executable = factories.mongo_proc(
     executable=os.getenv("MONGO_EXECUTABLE", "/usr/bin/mongod"),
+)
+
+setup_log(
+    mode=LogModeEnum.CONSOLE,
+    log_level="DEBUG",
+    logging_config=[
+        LoggingConfig(
+            name="pymongo",
+            level=logging.INFO,
+        )
+    ],
 )
 
 

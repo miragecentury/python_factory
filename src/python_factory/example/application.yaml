@@ -20,3 +20,7 @@ opentelemetry:
 odm:
   uri: "${MONGO_URI:mongodb://localhost:27017}"
   database: "test"
+
+logging:
+  - name: pymongo
+    level: INFO

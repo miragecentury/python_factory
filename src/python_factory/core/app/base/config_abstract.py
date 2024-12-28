@@ -1,11 +1,14 @@
 """Provide the configuration for the app server."""
 
+from pydantic import Field
+
 from python_factory.core.app.base.exceptions import ApplicationConfigFactoryException
 from python_factory.core.utils.configs import (
     UnableToReadConfigFileError,
     ValueErrorConfigError,
     build_config_from_file_in_package,
 )
+from python_factory.core.utils.log import LoggingConfig
 
 from ..enums import EnvironmentEnum
 from .fastapi_application_abstract import FastAPIConfigAbstract
@@ -17,6 +20,8 @@ class AppConfigAbstract(FastAPIConfigAbstract):
     environment: EnvironmentEnum
     service_name: str
     service_namespace: str
+
+    logging: list[LoggingConfig] = Field(default_factory=list, description="Logging configuration.")
 
 
 class AppConfigBuilder:
