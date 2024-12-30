@@ -5,13 +5,16 @@ import logging
 import os
 from collections.abc import AsyncGenerator, Generator
 from typing import Any
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from mirakuru import TCPExecutor
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from pytest_mongo import factories
 from structlog.stdlib import get_logger
+from testcontainers.mongodb import (  # pyright: ignore[reportMissingTypeStubs]
+    MongoDbContainer,
+)
 
 from python_factory.core.utils.log import LoggingConfig, LogModeEnum, setup_log
 
@@ -89,3 +92,48 @@ async def async_motor_database(
         # and need time to close nicely
         # so we wait a bit to prevent the exception and log message
         await asyncio.sleep(0.3)
+
+
+MAX_TRIES: int = 10
+
+
+@pytest.fixture(scope="session")
+def mongodb_server_as_container() -> Generator[MongoDbContainer, None, None]:
+    """Start the mongodb server."""
+    mongodb_container: MongoDbContainer = MongoDbContainer(
+        "mongo:latest",
+        port=27017,
+    )
+    if not mongodb_container:
+        raise Exception(  # pylint: disable=broad-exception-raised
+            "Could not find a random port for the mongodb server."
+        )
+
+    mongodb_container.start()
+    yield mongodb_container
+    mongodb_container.stop(delete_volume=True)
+
+
+@pytest.fixture(scope="function")
+async def mongodb_async_database_from_container(
+    mongodb_server_as_container: MongoDbContainer,  # pylint: disable=redefined-outer-name
+) -> AsyncGenerator[AsyncIOMotorDatabase[Any], None]:
+    """Create an async motor database."""
+    exposed_port: int | None = int(mongodb_server_as_container.get_exposed_port(27017))
+    exposed_port = exposed_port if exposed_port else 27017
+    username: str = os.environ.get("MONGO_INITDB_ROOT_USERNAME", "test")
+    password: str = os.environ.get("MONGO_INITDB_ROOT_PASSWORD", "test")
+    mongodb_client: AsyncIOMotorClient[Any] = AsyncIOMotorClient(
+        host=mongodb_server_as_container.get_container_host_ip(),
+        port=exposed_port,
+        connect=True,
+        username=username,
+        password=password,
+    )
+    database_name: UUID = uuid4()
+    mongodb_database: AsyncIOMotorDatabase[Any] = AsyncIOMotorDatabase(mongodb_client, str(database_name))
+
+    yield mongodb_database
+
+    await mongodb_client.drop_database(str(database_name))
+    mongodb_client.close()
