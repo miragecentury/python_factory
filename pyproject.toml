@@ -58,6 +58,13 @@ pytest-asyncio = "^0.25.0"
 pytest-mongo = "^3.1.0"
 locust = "^2.32.4"
 testcontainers = { version="^4.9.0", extras=["mongodb"] }
+types-deprecated = "^1.2.15.20241117"
+types-pygments = "^2.18.0.20240506"
+types-colorama = "^0.4.15.20240311"
+types-protobuf = "^5.29.1.20241207"
+types-psutil = "^6.1.0.20241221"
+types-pyopenssl = "^24.1.0.20240722"
+types-ujson = "^5.10.0.20240515"
 
 [tool.poetry.extras]
 
