@@ -40,14 +40,17 @@ class ApplicationPluginManagerAbstract(ABC):
 
     PLUGIN_PACKAGE_NAME: str = "python_factory.core.plugins"
 
-    def __init__(self) -> None:
+    def __init__(self, plugin_activation_list: PluginsActivationList | None = None) -> None:
         """Instanciate the application plugin manager."""
         if self.PACKAGE_NAME == "":
             raise ValueError("The package name must be set in the concrete plugin manager class.")
 
         self._plugins: list[PluginProtocol] = []
 
-        self._plugins_activation_list: PluginsActivationList = self._build_plugins_activation_list()
+        if plugin_activation_list is not None:
+            self._plugins_activation_list: PluginsActivationList = plugin_activation_list
+        else:
+            self._plugins_activation_list: PluginsActivationList = self._build_plugins_activation_list()
 
         self._check_pre_conditions()
 
