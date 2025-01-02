@@ -11,7 +11,7 @@ from httpx import Response
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from structlog.stdlib import get_logger
 
-from python_factory.example import App
+from fastapi_factory_utilities.example import App
 
 _logger = get_logger(__package__)
 

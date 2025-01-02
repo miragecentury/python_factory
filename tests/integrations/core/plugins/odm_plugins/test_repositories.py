@@ -8,8 +8,10 @@ from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel, Field
 
-from python_factory.core.plugins.odm_plugin.documents import BaseDocument
-from python_factory.core.plugins.odm_plugin.repositories import AbstractRepository
+from fastapi_factory_utilities.core.plugins.odm_plugin.documents import BaseDocument
+from fastapi_factory_utilities.core.plugins.odm_plugin.repositories import (
+    AbstractRepository,
+)
 
 
 class DocumentForTest(BaseDocument):

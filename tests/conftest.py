@@ -16,7 +16,11 @@ from testcontainers.mongodb import (  # pyright: ignore[reportMissingTypeStubs]
     MongoDbContainer,
 )
 
-from python_factory.core.utils.log import LoggingConfig, LogModeEnum, setup_log
+from fastapi_factory_utilities.core.utils.log import (
+    LoggingConfig,
+    LogModeEnum,
+    setup_log,
+)
 
 setup_log(mode=LogModeEnum.CONSOLE)
 

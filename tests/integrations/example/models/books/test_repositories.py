@@ -7,9 +7,13 @@ import beanie
 import pytest
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from python_factory.example.entities.books import BookEntity, BookName, BookType
-from python_factory.example.models.books.document import BookDocument
-from python_factory.example.models.books.repository import BookRepository
+from fastapi_factory_utilities.example.entities.books import (
+    BookEntity,
+    BookName,
+    BookType,
+)
+from fastapi_factory_utilities.example.models.books.document import BookDocument
+from fastapi_factory_utilities.example.models.books.repository import BookRepository
 
 
 class TestBookRepository:
