@@ -22,7 +22,14 @@ from fastapi_factory_utilities.core.utils.log import (
     setup_log,
 )
 
-setup_log(mode=LogModeEnum.CONSOLE)
+setup_log(
+    mode=LogModeEnum.CONSOLE,
+    logging_config=[
+        LoggingConfig(name="pymongo", level=logging.INFO),
+        LoggingConfig(name="mirakuru", level=logging.INFO),
+        LoggingConfig(name="asyncio", level=logging.INFO),
+    ],
+)
 
 _logger = get_logger(__package__)
 
