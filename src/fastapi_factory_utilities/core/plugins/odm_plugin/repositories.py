@@ -46,7 +46,7 @@ class AbstractRepository(ABC, Generic[DocumentGenericType, EntityGenericType]):
         super().__init__()
         self._database: AsyncIOMotorDatabase[Any] = database
         # Retrieve the generic concrete types
-        generic_args: tuple[Any, ...] = get_args(self.__orig_bases__[0])  # pyright: ignore
+        generic_args: tuple[Any, ...] = get_args(self.__orig_bases__[0])  # type: ignore
         self._document_type: type[DocumentGenericType] = generic_args[0]
         self._entity_type: type[EntityGenericType] = generic_args[1]
 

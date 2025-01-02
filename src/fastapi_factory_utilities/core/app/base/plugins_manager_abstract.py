@@ -49,11 +49,11 @@ class ApplicationPluginManagerAbstract(ABC):
             raise ValueError("The package name must be set in the concrete plugin manager class.")
 
         self._plugins: list[PluginProtocol] = []
-
+        self._plugins_activation_list: PluginsActivationList
         if plugin_activation_list is not None:
-            self._plugins_activation_list: PluginsActivationList = plugin_activation_list
+            self._plugins_activation_list = plugin_activation_list
         else:
-            self._plugins_activation_list: PluginsActivationList = self._build_plugins_activation_list()
+            self._plugins_activation_list = self._build_plugins_activation_list()
 
         self._check_pre_conditions()
 

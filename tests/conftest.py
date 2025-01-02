@@ -10,7 +10,7 @@ from uuid import UUID, uuid4
 import pytest
 from mirakuru import TCPExecutor
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from pytest_mongo import factories
+from pytest_mongo import factories  # pyright: ignore[reportMissingTypeStubs]
 from structlog.stdlib import get_logger
 from testcontainers.mongodb import (  # pyright: ignore[reportMissingTypeStubs]
     MongoDbContainer,

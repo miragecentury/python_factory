@@ -4,7 +4,7 @@ from typing import Any
 from uuid import UUID, uuid4
 
 import pytest
-from beanie import init_beanie
+from beanie import init_beanie  # pyright: ignore[reportUnknownVariableType]
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel, Field
 
