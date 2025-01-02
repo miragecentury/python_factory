@@ -1,4 +1,4 @@
-# python-poetry-empty
+# fastapi_factory_utilities
 
 Project Empty for Python with Poetry
 
