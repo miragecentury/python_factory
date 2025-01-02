@@ -1,5 +1,6 @@
 """Provides the module for the ODM plugin."""
 
+import asyncio
 import time
 from typing import Any, Self
 
@@ -134,10 +135,10 @@ class ODMBuilder:
         """
         start_timer = time.monotonic()
 
-        def is_connected(client: AsyncIOMotorClient[Any]) -> bool:
+        async def is_connected(client: AsyncIOMotorClient[Any]) -> bool:
             """Check if the client is connected."""
             try:
-                client.admin.command(
+                await client.admin.command(
                     command="ping",
                 )  # pyright: ignore
                 return True
@@ -145,12 +146,16 @@ class ODMBuilder:
                 _logger.debug("ODM client is not ready.")
                 return False
 
-        while not is_connected(client) and ((time.monotonic() - start_timer) < timeout_ms):
+        loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
+
+        while not loop.run_in_executor(None, asyncio.Task(is_connected(client))) and (  # type: ignore
+            (time.monotonic() - start_timer) < timeout_ms
+        ):
             if time.monotonic() - start_timer > timeout_ms:
                 raise ODMPluginConfigError("ODM client is not ready.")
             time.sleep(0.01)
 
-        if not is_connected(client):
+        if not loop.run_in_executor(None, asyncio.Task(is_connected(client))):  # type: ignore
             raise ODMPluginConfigError("ODM client is not ready.")
 
     def build_client(
